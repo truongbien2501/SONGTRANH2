@@ -59,7 +59,7 @@ root.title("Sông Tranh")
 # # Tạo combobox
 dbv = []
 dbv_kt = ['Nguyễn Mạnh Hà', 'Nguyễn Công Tài', 'Bành Thị Ngọc']
-dbv_tv = ['Nguyễn Đình Huấn', 'Nguyễn Văn Tình', 'Lê Thị Thanh Huyền']
+dbv_tv = ['Nguyễn Đình Huấn', 'Vũ Văn Tình', 'Lê Thị Thanh Huyền']
 for a in dbv_kt:
     for b in dbv_tv:
         dbv.append(a +', ' + b)
@@ -132,6 +132,5 @@ def update_selected_duyet(event):
     DRHV10.set_selected_duyet(duyettin)
 # Gắn sự kiện ComboboxSelected với hàm update_selected_value
 combo_box1.bind("<<ComboboxSelected>>", update_selected_duyet)
-
 
 root.mainloop()

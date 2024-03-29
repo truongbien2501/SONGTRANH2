@@ -28,7 +28,7 @@ def guimail(chude, at1, at2, danhsachgui, email, password):
         attachment2 = open(at2, 'rb')
         part2 = MIMEApplication(attachment2.read())
         attachment2.close()
-        part2.add_header('Content-Disposition', 'attachment', filename=at1.split('\\')[-1])
+        part2.add_header('Content-Disposition', 'attachment', filename=at2.split('\\')[-1])
         msg.attach(part2)
 
     smtp = smtplib.SMTP('smtp.gmail.com', 587)

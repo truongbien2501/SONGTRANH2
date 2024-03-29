@@ -102,6 +102,10 @@ def set_selected_duyet(value):
     global duyettin
     duyettin = value
 
+def custom_round(value):
+    if value != '-' and value % 1 == 0.5:
+        return round(value + 0.1,0)
+    return round(value,0)
 
 def lamtron_Q(q):
     q = float(q)
@@ -117,13 +121,9 @@ def lamtron_Q(q):
 
 def sobantin():
     now= datetime.now()
-    bd = datetime(int(now.strftime('%Y')),1,1)
+    bd = datetime((now-timedelta(days=365)).year,12,15)
     hs = now - bd
     sbt = int(hs.days*2)
-    if sbt <10:
-        sbt = '0' + str(sbt+1)
-    else:
-        sbt = str(sbt+1)
     return sbt
 
 def tin_tvhn():
@@ -134,7 +134,8 @@ def tin_tvhn():
     font.name = 'Times New Roman'
     font.size = Pt(13)
     # so ban tin
-    # sbt = sobantin()
+    sbt = sobantin()
+    # print(sbt)
     if now.hour > 13:
         p=0
         tgpt = datetime(now.year,now.month,now.day,19,30)
@@ -146,7 +147,7 @@ def tin_tvhn():
             dl = pr.text
             if 'Số:' in dl:
                 pr.text=''
-                soso = 'Số: '+ str(str(now.timetuple().tm_yday*2-p)) + '/DBTVST2-ĐQNAM'
+                soso = 'Số: '+ str(sbt-p) + '/DBTVST2-ĐQNAM'
                 run = pr.add_run(soso)
                 run.bold = False
                 pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
@@ -218,8 +219,10 @@ def tin_tvhn():
     mua6h = mua6h.astype(str)
     mua6h =mua6h.replace('0.0','-')
     mua6h =mua6h.replace('nan','-')
-    # mua = mua[(mua.index.hour==1) |(mua.index.hour==7)|(mua.index.hour==13)|(mua.index.hour==19)]
-    # print(mua)
+    mua6h = mua6h.applymap(lambda x: custom_round(float(x)) if x != '-' else '-')
+    mua6h = mua6h.astype(str)
+    mua6h =mua6h.replace('0.0','-')
+    # print(mua6h)
     
     
 # tracang  traleng  tranam2  trabui  tramai  tratap  dapsongtranh  tralinh  tragiac  tradon  travan
@@ -279,9 +282,9 @@ def tin_tvhn():
     mua_db = mua_db[['time','muaTra Doc','muaTrung Luu','muaThuong Luu']]
     mua_db.set_index('time',inplace=True)
     mua_db = mua_db[(mua_db.index > tgpt - timedelta(minutes=30)) & (mua_db.index <= tgpt + timedelta(hours=23.5))]
-    odoc.tables[3].cell(1,1).paragraphs[0].add_run("{0:.1f}".format(mua_db['muaTra Doc'].sum())).font.size = Pt(13)
-    odoc.tables[3].cell(1,2).paragraphs[0].add_run("{0:.1f}".format(mua_db['muaTrung Luu'].sum())).font.size = Pt(13)
-    odoc.tables[3].cell(1,3).paragraphs[0].add_run("{0:.1f}".format(mua_db['muaThuong Luu'].sum())).font.size = Pt(13)
+    odoc.tables[3].cell(1,1).paragraphs[0].add_run("{0:.0f}".format(mua_db['muaTra Doc'].sum())).font.size = Pt(13)
+    odoc.tables[3].cell(1,2).paragraphs[0].add_run("{0:.0f}".format(mua_db['muaTrung Luu'].sum())).font.size = Pt(13)
+    odoc.tables[3].cell(1,3).paragraphs[0].add_run("{0:.0f}".format(mua_db['muaThuong Luu'].sum())).font.size = Pt(13)
     
     if duyettin=='Trương Tuyến':
         picture_filename = 'chuky/kydau_tuyen.png'

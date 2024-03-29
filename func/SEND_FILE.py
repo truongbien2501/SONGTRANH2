@@ -152,10 +152,12 @@ def gui_drhn():
     else:
         tgpt = 'chiều'
     filegui = tim_file(read_txt('path_tin/DRHN.txt'),'.pdf')
+    filedocx = filegui.replace('.signed','')
+    filedocx = filedocx.replace('.pdf','.docx')
     result = show_message(filegui)
     if result == "yes":
         convert_pdf_image(filegui,'tin_TVHN.png')
-        guimail('Bản tin {} ngày {} '.format(tgpt,now.strftime('%d/%m/%Y')),filegui,'',read_txt('group_mail/songtranh.txt').replace('\n',''),read_line('infor/mail.txt')[0],read_line('infor/mail.txt')[1])
+        guimail('Bản tin {} ngày {} '.format(tgpt,now.strftime('%d/%m/%Y')),filegui,filedocx,read_txt('group_mail/songtranh.txt').replace('\n',''),read_line('infor/mail.txt')[0],read_line('infor/mail.txt')[1])
         upload_file(filegui,read_line('url_sever/SRHN.txt')[0],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ban tin
         upload_file('DATA\\QNAM.accdb',read_line('url_sever/SRHN.txt')[1],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
         upload_file('image\\tin_TVHN.png',read_line('url_sever/SRHN.txt')[2],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
