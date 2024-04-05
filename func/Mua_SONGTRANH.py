@@ -112,8 +112,9 @@ def mucnuocsongtranh():
     # print(table_header)
     # print(table_data)
     df = pd.DataFrame(table_data[4:])
+    print(df)
     # Ghép cột 1 và cột 2 thành một cột datetime
-    df.insert(0,'time',pd.to_datetime(df[1] + ' ' + df[0]))
+    df.insert(0,'time',pd.to_datetime(df[1] + ' ' + df[0],format='%d-%m-%Y %H:%M'))
     # print(df)
     # Xóa cột 0 và 1 nếu bạn muốn
     df = df.drop(columns=[0, 1,8,9])
@@ -143,7 +144,7 @@ def muasongtranh():
 
     for a in range(1,42):
         element = driver.find_element(by=By.CSS_SELECTOR,value='#q-portal--menu--1 > div > div > div.q-date__main.col.column > div.q-date__content.col.relative-position > div > div.q-date__calendar-days-container.relative-position.overflow-hidden > div > div:nth-child({})'.format(str(a)))
-        if str(element.text) == now.strftime('%d'):
+        if str(element.text) == str(now.day):
             element.click()
             element = driver.find_element(by=By.CSS_SELECTOR,value='#q-portal--menu--1 > div > div > div.q-date__main.col.column > div.q-date__content.col.relative-position > div > div.q-date__calendar-days-container.relative-position.overflow-hidden > div > div:nth-child({})'.format(str(a-1)))
             element.click()
@@ -187,7 +188,7 @@ def muasongtranh():
             row_data.append(cell.text)
         table_data.append(row_data)
     # print(table_data)
-    df_mua = pd.DataFrame(table_data,columns=table_header[:12])
+    df_mua = pd.DataFrame(table_data,columns=table_header[:13])
     # df_mua = df_mua.iloc[3:-1,:]
     df_mua.set_index('Thời gian',inplace=True)
     df_mua.sort_index(inplace=True)
@@ -254,8 +255,16 @@ def insert_data(df,table_name):
     
 def save_solieu_mua():
     df = muasongtranh()
+    # print(df)
     df.reset_index(inplace=True)
     insert_data(df,'mua')
+    # try:
+    #     insert_data_sql(df[['time',4]],'ho_dakdrinh_qve')
+    #     insert_data_sql(df[['time',5]],'ho_dakdrinh_qdieutiet')
+    #     insert_data_sql(df[['time',2]],'ho_dakdrinh_mucnuoc')
+    # except:
+    #     pass
+    
     messagebox.showinfo('Thông báo','OK!')
 
 def save_solieu_mucnuoc():

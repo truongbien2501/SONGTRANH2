@@ -95,7 +95,8 @@ lb = Label(root,text='Duyệt tin:',font=('Arial Bold',14)).place(x=620,y=80)
 tao_btn('bt_SQL',"Mưa",save_solieu_mua,80,160) # load so lieu
 tao_btn('bt_tvhv',"Dự báo Windy",laysolieudubao_windy,80,160+50) #lam tin
 tao_btn('bt_tvhv',"Tin nền",tin_tvhn,80,160+100) #lam tin
-tao_btn('bt_tvhv',"Mực Nước",save_solieu_mucnuoc,80,160+150) #lam tin
+tao_btn('bt_tvhv',"H_Web",save_solieu_mucnuoc,40,160+150) #lam tin
+tao_btn('bt_tvhv',"H_Mail",downloadattmail,125,160+150) #lam tin
 tao_btn('bt_tvhd',"Load_tin_TV",tin_tv_load,80,160+200) #lam tin
 tao_btn('bt_upload',"Gửi tin",gui_drhn,80,160+250) # ho so du bao
 tao_btn('bt_danhgia',"Nghiệm thu",nghiemthu_tvhn,80,160+300) # danh gia

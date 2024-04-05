@@ -105,7 +105,7 @@ def set_selected_duyet(value):
 def custom_round(value):
     if value != '-' and value % 1 == 0.5:
         return round(value + 0.1,0)
-    return round(value,0)
+    return int(round(value,0))
 
 def lamtron_Q(q):
     q = float(q)
@@ -220,6 +220,7 @@ def tin_tvhn():
     mua6h =mua6h.replace('0.0','-')
     mua6h =mua6h.replace('nan','-')
     mua6h = mua6h.applymap(lambda x: custom_round(float(x)) if x != '-' else '-')
+    # print(mua6h)
     mua6h = mua6h.astype(str)
     mua6h =mua6h.replace('0.0','-')
     # print(mua6h)
@@ -415,10 +416,13 @@ def uploaddb_tvhn():
         # muabd24_thuongluu = odoc.tables[3].cell(1,1).text
         # qbd du bao
         qbd =  odoc.tables[4].cell(1,1).text
+        qbd = qbd.split('-')
+        trung_binh = np.mean([int(x) for x in qbd])
+        print(trung_binh)
         # hdb du bao
         hdb = odoc.tables[5].cell(2,2).text
         updatedatabase_dubao('ho_dakdrinh_mucnuoc','muadb24',str(muabd24_dap))
-        updatedatabase_dubao('ho_dakdrinh_mucnuoc','qdubao',str(qbd))
+        updatedatabase_dubao('ho_dakdrinh_mucnuoc','qdubao',str(trung_binh))
         updatedatabase_dubao('ho_dakdrinh_mucnuoc','hdb',str(hdb))
         
         

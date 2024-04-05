@@ -13,8 +13,9 @@ from selenium.webdriver.common.by import By
 import numpy as np
 from docx import Document
 from win32com import client
-from func.Seach_file import tim_file,read_txt
+from func.Seach_file import tim_file,read_txt,read_line
 import os
+from func.Mua_SONGTRANH import insert_data,insert_data_sql
 def mo_excel():
     pth = read_txt('path_tin/DATA_EXCEL.txt') + '/DR_THUYVAN.xlsx'
     # pth = os.getcwd() + '/DATA/DR_THUYVAN.xlsx'
@@ -28,30 +29,50 @@ def mo_word(pth):
     odoc = word.Documents.Open(pth)
 
 def downloadattmail():
+    now = datetime.now()
     host = "imap.gmail.com"
-    username = "kttvqngai@gmail.com"
-    password = 'dhwwemyolidvvxuu'
+    username = read_line('infor/mail.txt')[0]
+    password = read_line('infor/mail.txt')[1]
     download_folder = os.getcwd()
 
     if not os.path.isdir(download_folder):
         os.makedirs(download_folder, exist_ok=True)
         
     mail = Imbox(host, username=username, password=password, ssl=True, ssl_context=None, starttls=False)
-    messages = mail.messages(sent_from='pxvhdakdrinh@gmail.com') # defaults to inbox
+    messages = mail.messages(sent_from='nmsongtranh2@gmail.com') # defaults to inbox
     for (uid, message) in messages[-1:]:
         mail.mark_seen(uid) # optional, mark message as read
 
         for idx, attachment in enumerate(message.attachments):
             try:
                 att_fn = attachment.get('filename')
-                if 'Đak' in att_fn:
+                # print(att_fn)
+                if now.strftime('%d-%m-%Y') in att_fn:
                     # download_path = f"{download_folder}/{att_fn}"
-                    with open('SOLIEU/DAKDRINH.doc', "wb") as fp:
+                    with open('SOLIEU/songtranh2.xls', "wb") as fp:
                         fp.write(attachment.get('content').read())
+                        # break
             except:
                 print('traceback.print_exc()')
     mail.logout()
-    convertdocx()
+    # convertdocx()
+    df = pd.read_excel('SOLIEU/songtranh2.xls')
+    df = df.iloc[4:,:]
+    df.columns = ['time','giờ','mucnuoc','qden','qmay','qtran','dctoithieu']
+    homtruoc = now - timedelta(days=1)
+    homtruoc = datetime(homtruoc.year,homtruoc.month,homtruoc.day,14)
+    df['time'] = pd.date_range(homtruoc,freq='H',periods=len(df['time']))
+    df.insert(3,'mucnuochaluu',np.nan)
+    df = df.drop(['giờ'],axis=1)
+    # print(df)
+    insert_data(df,'thuyvan')
+    df['tongxa'] = df['qmay'] + df['qtran'] + + df['dctoithieu']
+    try:
+        insert_data_sql(df[['time','qden']],'ho_dakdrinh_qve')
+        insert_data_sql(df[['time','tongxa']],'ho_dakdrinh_qdieutiet')
+        insert_data_sql(df[['time','mucnuoc']],'ho_dakdrinh_mucnuoc')
+    except:
+        pass
     messagebox.showinfo('Thông báo', 'OK')
     
 def downloadattmail_lulu():
