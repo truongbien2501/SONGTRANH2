@@ -40,28 +40,38 @@ def downloadattmail():
         
     mail = Imbox(host, username=username, password=password, ssl=True, ssl_context=None, starttls=False)
     messages = mail.messages(sent_from='nmsongtranh2@gmail.com') # defaults to inbox
-    for (uid, message) in messages[-1:]:
+    y =1
+    for (uid, message) in messages[-2:]:
         mail.mark_seen(uid) # optional, mark message as read
 
         for idx, attachment in enumerate(message.attachments):
             try:
-                att_fn = attachment.get('filename')
-                # print(att_fn)
-                if now.strftime('%d-%m-%Y') in att_fn:
-                    # download_path = f"{download_folder}/{att_fn}"
-                    with open('SOLIEU/songtranh2.xls', "wb") as fp:
-                        fp.write(attachment.get('content').read())
+                # att_fn = attachment.get('filename')
+                with open('SOLIEU/songtranh{}.xls'.format(str(y)) , "wb") as fp:
+                    fp.write(attachment.get('content').read())
+                    y+=1
                         # break
             except:
                 print('traceback.print_exc()')
     mail.logout()
-    # convertdocx()
-    df = pd.read_excel('SOLIEU/songtranh2.xls')
+
+    df = pd.read_excel('SOLIEU/songtranh1.xls')
     df = df.iloc[4:,:]
     df.columns = ['time','giờ','mucnuoc','qden','qmay','qtran','dctoithieu']
-    homtruoc = now - timedelta(days=1)
-    homtruoc = datetime(homtruoc.year,homtruoc.month,homtruoc.day,14)
-    df['time'] = pd.date_range(homtruoc,freq='H',periods=len(df['time']))
+    ngay = datetime.strptime(df['time'].loc[4] + ' ' + str(df['giờ'].loc[4]) ,'%d/%m/%Y %H')
+    # # homtruoc = pd.datetime(homtruoc.year,homtruoc.month,homtruoc.day,14)
+    df['time'] = pd.date_range(ngay,freq='H',periods=len(df['time']))
+    
+    df1 = pd.read_excel('SOLIEU/songtranh2.xls')
+    df1 = df1.iloc[4:,:]
+    df1.columns = ['time','giờ','mucnuoc','qden','qmay','qtran','dctoithieu']
+    ngay = datetime.strptime(df1['time'].loc[4] + ' ' + str(df1['giờ'].loc[4]) ,'%d/%m/%Y %H')
+    # # homtruoc = pd.datetime(homtruoc.year,homtruoc.month,homtruoc.day,14)
+    df1['time'] = pd.date_range(ngay,freq='H',periods=len(df1['time']))
+    
+    df = pd.concat([df,df1],axis=0)
+    df =df.loc[~df['time'].duplicated(keep='last')]
+
     df.insert(3,'mucnuochaluu',np.nan)
     df = df.drop(['giờ'],axis=1)
     # print(df)
