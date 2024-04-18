@@ -219,10 +219,11 @@ def tin_tvhn():
     mua6h = mua6h.astype(str)
     mua6h =mua6h.replace('0.0','-')
     mua6h =mua6h.replace('nan','-')
+    print(mua6h)
     mua6h = mua6h.applymap(lambda x: custom_round(float(x)) if x != '-' else '-')
-    # print(mua6h)
+    print(mua6h)
     mua6h = mua6h.astype(str)
-    mua6h =mua6h.replace('0.0','-')
+    # mua6h =mua6h.replace('0.0','-')
     # print(mua6h)
     
     

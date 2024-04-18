@@ -12,6 +12,7 @@ import sys
 from PIL import Image
 import io
 import  mysql.connector
+from docx import Document
 def creat_cxn():
     # Kết nối đến MySQL
     host = '113.160.225.84'
@@ -119,7 +120,25 @@ def upload_database():
     insert_data(df[['time','Htđ(m)']],'ho_dakdrinh_mucnuoc')
     messagebox.showinfo('Thông báo!','OK')
     
+
+def bientapbantin(pth,loaibantin):
+    odoc = Document(pth)    
+    odoc.tables[0]._element.getparent().remove(odoc.tables[0]._element) # xoa di table so 0
+    for tbl in odoc.tables[-2:]:
+        cell = tbl.cell(0, 0).text
+        print(cell)
+        if 'Nơi nhận' in cell:
+            tbl._element.getparent().remove(tbl._element)
     
+    # odoc.tables[len(odoc.tables)-2]._element.getparent().remove(odoc.tables[5]._element) # xoa di table so 5
+    tin_web = 'TINMAU/{}_WEB.docx'.format(loaibantin)
+    odoc.save(tin_web)
+    convert(tin_web,'TINMAU/{}_WEB.pdf'.format(loaibantin))
+    convert_pdf_image('TINMAU/{}_WEB.pdf'.format(loaibantin),'tin_{}.png'.format(loaibantin))
+ 
+    
+
+
 def upload_stream():
     filegui_datatv = read_txt('path_tin/DATA_EXCEL.txt') + '/DR_THUYVAN.xlsx'
     filegui_datakt = read_txt('path_tin/DATA_EXCEL.txt') + '/DATA_DR.xlsx'    
@@ -145,61 +164,85 @@ def convert_pdf_image(filegui,nameoutput):
         y_offset += im.size[1]
     new_im.save('image/' + nameoutput)
     
-def gui_drhn():
+def gui_drhn(): 
     now = datetime.now()
     if now.hour > 13:
-        tgpt = 'sáng'
-    else:
         tgpt = 'chiều'
+    else:
+        tgpt = 'sáng'
+    # QNAM_DBKTTV_STRANH_20240414_0730.docx
     filegui = tim_file(read_txt('path_tin/DRHN.txt'),'.pdf')
     filedocx = filegui.replace('.signed','')
     filedocx = filedocx.replace('.pdf','.docx')
     result = show_message(filegui)
     if result == "yes":
-        convert_pdf_image(filegui,'tin_TVHN.png')
+        # bientapbantin(filedocx,'TVHN')
+        try: 
+            bientapbantin(filedocx,'TVHN')
+        except:
+            pass
         guimail('Bản tin {} ngày {} '.format(tgpt,now.strftime('%d/%m/%Y')),filegui,filedocx,read_txt('group_mail/songtranh.txt').replace('\n',''),read_line('infor/mail.txt')[0],read_line('infor/mail.txt')[1])
-        upload_file(filegui,read_line('url_sever/SRHN.txt')[0],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ban tin
-        upload_file('DATA\\QNAM.accdb',read_line('url_sever/SRHN.txt')[1],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
+        # upload_file(filegui,read_line('url_sever/SRHN.txt')[0],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ban tin
+        # upload_file('DATA\\QNAM.accdb',read_line('url_sever/SRHN.txt')[1],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
         upload_file('image\\tin_TVHN.png',read_line('url_sever/SRHN.txt')[2],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
         messagebox.showinfo("Thông báo", "Đã gửi")
     else:
         messagebox.showinfo("Thông báo", "Hủy gửi")
 
-def gui_drhv():
-    filegui = tim_file(read_txt('path_tin/DRHN.txt'),'.pdf')
+def gui_sthv(): 
+    now = datetime.now().strftime('%Y%m%d')
+    filegui = tim_file(read_txt('path_tin/DRHV.txt'),'.pdf')
+    filedocx = filegui.replace('.signed','')
+    filedocx = filedocx.replace('.pdf','.docx')
+
     result = show_message(filegui)
     if result == "yes":
-        convert_pdf_image(filegui,'tin_TVHN.png')
-        guimail('Bản tin dự báo Sông Tranh 2 ngày ' + datetime.now().strftime('%d/%m/%Y'),filegui,'',read_txt('group_mail/songtranh.txt').replace('\n',''),read_line('infor/mail.txt')[0],read_line('infor/mail.txt')[1])
-        upload_file(filegui,read_line('url_sever/SRHN.txt')[0],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ban tin
-        upload_file('DATA\\QNAM.accdb',read_line('url_sever/SRHN.txt')[1],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
-        upload_file('image\\tin_TVHN.png',read_line('url_sever/SRHN.txt')[2],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
+        # bientapbantin(filedocx,'TVHV')
+        try: 
+            bientapbantin(filedocx,'TVHV')
+        except:
+            pass
+        guimail('Bản tin hạn vừa ngày {}'.format(now.strftime('%d/%m/%Y')),filegui,filedocx,read_txt('group_mail/songtranh.txt').replace('\n',''),read_line('infor/mail.txt')[0],read_line('infor/mail.txt')[1])
+        # upload_file(filegui,read_line('url_sever/SRHN.txt')[0],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ban tin
+        upload_file('image\\tin_TVHV.png',read_line('url_sever/SRHN.txt')[2],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
         messagebox.showinfo("Thông báo", "Đã gửi")
     else:
         messagebox.showinfo("Thông báo", "Hủy gửi")
         
-def gui_drhd():
-    filegui = tim_file(read_txt('path_tin/DRHN.txt'),'.pdf')
+def gui_sthd(): 
+    now = datetime.now().strftime('%Y%m%d')
+    filegui = tim_file(read_txt('path_tin/DRHD.txt'),'.pdf')
+    filedocx = filegui.replace('.signed','')
+    filedocx = filedocx.replace('.pdf','.docx')
     result = show_message(filegui)
     if result == "yes":
-        convert_pdf_image(filegui,'tin_TVHN.png')
-        # guimail('Bản tin dự báo Sông Tranh 2 ngày ' + datetime.now().strftime('%d/%m/%Y'),filegui,'',read_txt('group_mail/songtranh.txt').replace('\n',''),read_line('infor/mail.txt')[0],read_line('infor/mail.txt')[1])
-        upload_file(filegui,read_line('url_sever/SRHN.txt')[0],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ban tin
-        upload_file('DATA\\QNAM.accdb',read_line('url_sever/SRHN.txt')[1],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
-        upload_file('image\\tin_TVHN.png',read_line('url_sever/SRHN.txt')[2],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
+        # bientapbantin(filedocx,'TVHD')
+        try: 
+            bientapbantin(filedocx,'TVHD')
+        except:
+            pass        
+        guimail('Bản tin hạn dài ngày {}'.format(now.strftime('%d/%m/%Y')),filegui,filedocx,read_txt('group_mail/songtranh.txt').replace('\n',''),read_line('infor/mail.txt')[0],read_line('infor/mail.txt')[1])
+        # upload_file(filegui,read_line('url_sever/SRHN.txt')[0],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ban tin
+        upload_file('image\\tin_TVHD.png',read_line('url_sever/SRHN.txt')[2],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
         messagebox.showinfo("Thông báo", "Đã gửi")
     else:
-        messagebox.showinfo("Thông báo", "Hủy gửi")        
+        messagebox.showinfo("Thông báo", "Hủy gửi")
 
-def gui_lulu():
-    filegui = tim_file(read_txt('path_tin/DRHN.txt'),'.pdf')
+def gui_lulu(): 
+    now = datetime.now().strftime('%Y%m%d')
+    filegui = tim_file(read_txt('path_tin/LULU.txt'),'.pdf')
+    filedocx = filegui.replace('.signed','')
+    filedocx = filedocx.replace('.pdf','.docx')
     result = show_message(filegui)
     if result == "yes":
-        convert_pdf_image(filegui,'tin_TVHN.png')
-        # guimail('Bản tin dự báo Sông Tranh 2 ngày ' + datetime.now().strftime('%d/%m/%Y'),filegui,'',read_txt('group_mail/songtranh.txt').replace('\n',''),read_line('infor/mail.txt')[0],read_line('infor/mail.txt')[1])
-        upload_file(filegui,read_line('url_sever/SRHN.txt')[0],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ban tin
-        upload_file('DATA\\QNAM.accdb',read_line('url_sever/SRHN.txt')[1],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
-        upload_file('image\\tin_TVHN.png',read_line('url_sever/SRHN.txt')[2],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
+        # bientapbantin(filedocx,'LULU')
+        try: 
+            bientapbantin(filedocx,'LULU')
+        except:
+            pass
+        guimail('Bản tin hạn vừa ngày {} '.format(now.strftime('%d/%m/%Y')),filegui,filedocx,read_txt('group_mail/songtranh.txt').replace('\n',''),read_line('infor/mail.txt')[0],read_line('infor/mail.txt')[1])
+        # upload_file(filegui,read_line('url_sever/SRHN.txt')[0],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ban tin
+        upload_file('image\\tin_LULU.png',read_line('url_sever/SRHN.txt')[2],read_line('infor/songtranh.txt')[0],read_line('infor/songtranh.txt')[1]) # gui ảnh
         messagebox.showinfo("Thông báo", "Đã gửi")
     else:
-        messagebox.showinfo("Thông báo", "Hủy gửi")        
+        messagebox.showinfo("Thông báo", "Hủy gửi")

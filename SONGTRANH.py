@@ -5,7 +5,7 @@ from func.Mua_SONGTRANH import save_solieu_mua,save_solieu_mucnuoc
 from func.load_data import downloadattmail,write_rain,load_sl_thuyvan,load_sl_5day,mo_excel,downloadattmail_lulu,load_sl_thuyvan_lulu
 from Run_tin.DRHN import tin_tvhn,tin_tv_load,nghiemthu_tvhn
 from Run_tin.DRHV10 import tin_nenKT_10day,tin_tv10_load
-from func.SEND_FILE import gui_drhd,gui_drhv,gui_drhn,gui_lulu
+from func.SEND_FILE import gui_drhn,gui_sthv,gui_sthd,gui_lulu
 from Run_tin.DRLULU import tin_nenKT_lulu,tin_lulu_load,tin_lulu_load1
 from Run_tin import DRHN,DRHV10,DRLULU
 from func.Seach_file import tim_file,read_txt
@@ -103,14 +103,35 @@ tao_btn('bt_danhgia',"Nghiệm thu",nghiemthu_tvhn,80,160+300) # danh gia
 # tao_btn('bt_hoso',"UP_DATABASE",upload_database,80,160+300) # ho so du bao
 tao_btn('hs_uploadt',"Mở tin",mo_tvhn,80,160+350) #lam tin
 
-# # tao button drhv5
+# # tao button han vua 10
 tao_btn('bt_dlh',"Tin nền KT",tin_nenKT_10day,245,160) # load ho
 # tao_btn('bt_dungtich',"Tin nền KT",tin_nenKT_10day,245,160+50) #dung tich ho
 # tao_btn('bt_dungtich',"Mở DATA TV",mo_excel,245,160+100) #dung tich ho
 # tao_btn('bt_tvhv_map',"Load_TV", tin_tv10_load,245,160+50+100) #ve map
 # tao_btn('bt_tvhv',"Gửi tin",gui_drhv,245,160+50+50+100) #lam tin
 # tao_btn('bt_tvhv',"HỒ SƠ",hs_tvhv05,245,160+250) #lam tin
-# tao_btn('bt_upload10',"Gửi tin",gui_tvhv,245,160+300) # gui tin
+tao_btn('bt_upload10',"Gửi tin",gui_sthv,245,160+300) # gui tin
+
+
+# # tao button han dai
+tao_btn('bt_dlh',"Tin nền KT",tin_nenKT_10day,245,160) # load ho
+# tao_btn('bt_dungtich',"Tin nền KT",tin_nenKT_10day,245,160+50) #dung tich ho
+# tao_btn('bt_dungtich',"Mở DATA TV",mo_excel,245,160+100) #dung tich ho
+# tao_btn('bt_tvhv_map',"Load_TV", tin_tv10_load,245,160+50+100) #ve map
+# tao_btn('bt_tvhv',"Gửi tin",gui_drhv,245,160+50+50+100) #lam tin
+# tao_btn('bt_tvhv',"HỒ SƠ",hs_tvhv05,245,160+250) #lam tin
+tao_btn('bt_upload10',"Gửi tin",gui_sthd,90+160+320,160+300) # gui tin
+
+# # tao button han dai
+tao_btn('bt_dlh',"Tin nền KT",tin_nenKT_10day,245,160) # load ho
+# tao_btn('bt_dungtich',"Tin nền KT",tin_nenKT_10day,245,160+50) #dung tich ho
+# tao_btn('bt_dungtich',"Mở DATA TV",mo_excel,245,160+100) #dung tich ho
+# tao_btn('bt_tvhv_map',"Load_TV", tin_tv10_load,245,160+50+100) #ve map
+# tao_btn('bt_tvhv',"Gửi tin",gui_drhv,245,160+50+50+100) #lam tin
+# tao_btn('bt_tvhv',"HỒ SƠ",hs_tvhv05,245,160+250) #lam tin
+tao_btn('bt_upload10',"Gửi tin",gui_lulu,90+160+320+130,160+300) # gui tin
+
+
 
 
 selected_value = combo_box.get()

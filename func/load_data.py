@@ -57,11 +57,12 @@ def downloadattmail():
 
     df = pd.read_excel('SOLIEU/songtranh1.xls')
     df = df.iloc[4:,:]
+    print(df)
     df.columns = ['time','giờ','mucnuoc','qden','qmay','qtran','dctoithieu']
     ngay = datetime.strptime(df['time'].loc[4] + ' ' + str(df['giờ'].loc[4]) ,'%d/%m/%Y %H')
     # # homtruoc = pd.datetime(homtruoc.year,homtruoc.month,homtruoc.day,14)
     df['time'] = pd.date_range(ngay,freq='H',periods=len(df['time']))
-    
+    print(df)
     df1 = pd.read_excel('SOLIEU/songtranh2.xls')
     df1 = df1.iloc[4:,:]
     df1.columns = ['time','giờ','mucnuoc','qden','qmay','qtran','dctoithieu']
@@ -74,7 +75,7 @@ def downloadattmail():
 
     df.insert(3,'mucnuochaluu',np.nan)
     df = df.drop(['giờ'],axis=1)
-    # print(df)
+    print(df)
     insert_data(df,'thuyvan')
     df['tongxa'] = df['qmay'] + df['qtran'] + + df['dctoithieu']
     try:
