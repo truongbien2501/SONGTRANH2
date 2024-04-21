@@ -126,7 +126,7 @@ def bientapbantin(pth,loaibantin):
     odoc.tables[0]._element.getparent().remove(odoc.tables[0]._element) # xoa di table so 0
     for tbl in odoc.tables[-2:]:
         cell = tbl.cell(0, 0).text
-        print(cell)
+        # print(cell)
         if 'Nơi nhận' in cell:
             tbl._element.getparent().remove(tbl._element)
     

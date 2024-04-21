@@ -17,6 +17,12 @@ def set_selected_value(value):
     selected_value = value
 
 duyettin = None
+
+def custom_round(value):
+    if value != '-' and value % 1 == 0.5:
+        return round(value + 0.1,0)
+    return int(round(value,0))
+
 def set_selected_duyet(value):
     global duyettin
     duyettin = value
@@ -70,12 +76,14 @@ def xacdinhngaydaqua():
 def tin_nenKT_10day():
     now = datetime.now()
     odoc = Document('TINMAU/ST_TVHV10.docx')
+    # odoc = Document(r'D:\PM_PYTHON\SONGTRANH\TINMAU\ST_TVHV10.docx')
     style = odoc.styles['Normal']
     font = style.font
     font.name = 'Times New Roman'
     font.size = Pt(13)
     # so ban tin
     sbt = sobt()
+    # sbt = 25
     for t in range(0,2):
         for pr in odoc.tables[0].cell(0,t).paragraphs:
             dl = pr.text
@@ -98,33 +106,43 @@ def tin_nenKT_10day():
             
     
     ngaydb = xacdinhngaydb()
-    ngaydb = ngaydb - timedelta(days=1)
-    ngaydb = ngaydb.strftime('%d/%m/%Y')
+    ngaydb = ngaydb - timedelta(days=1)    
     ngaytd = xacdinhngaydaqua()
-    bd_mua = datetime(ngaytd.year,ngaytd.month,ngaytd.day,7)
-    ngaytd = ngaytd.strftime('%d/%m/%Y')
+    bd_mua = datetime(ngaytd.year,ngaytd.month,ngaytd.day,20)
     
+    # ngaydb = datetime.now()
+    # ngaytd = ngaydb - timedelta(days=10)
+    # bd_mua = datetime(ngaytd.year,ngaytd.month,ngaytd.day,0)
     
     for pr in odoc.paragraphs:
         dl = pr.text
-        if '(Từ ngày 21 đến 31/3/2024)' in dl:
+        if 'BẢN TIN DỰ BÁO THỜI TIẾT THUỶ VĂN HẠN VỪA' in dl:
             # ban tin tiep theo
-            ntn = '(Từ ngày {} đến ngày {})'.format(now.strftime('%d/%m/%Y'),ngaydb)
+            ntn = 'BẢN TIN DỰ BÁO THỜI TIẾT THUỶ VĂN HẠN VỪA'
+            pr.text  =''
+            run = pr.add_run(ntn)
+            run.bold = True
+            run.font.size = Pt(14)
+            pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        elif '(Từ ngày 21 đến 31/3/2024)' in dl:
+            # ban tin tiep theo
+            ntn = '(Từ ngày {} đến ngày {})'.format(now.strftime('%d/%m/'),ngaydb.strftime('%d/%m/%Y'))
             pr.text  =''
             run = pr.add_run(ntn)
             run.font.size = Pt(13)
             pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         elif 'Bảng 1: Tổng hợp lượng mưa (mm) từ ngày 11 - 20/3/2024' in dl:
             # ban tin tiep theo
-            ntn = 'Bảng 1: Tổng hợp lượng mưa (mm) từ ngày {} - {}'.format(ngaytd,(now-timedelta(days=1)).strftime('%d/%m/%Y'))
+            ntn = 'Bảng 1: Tổng hợp lượng mưa (mm) từ ngày {} - {}'.format(ngaytd.strftime('%d/%m'),(now-timedelta(days=1)).strftime('%d/%m/%Y'))
             pr.text  =''
             run = pr.add_run(ntn)
             run.bold = True
+            run.font.name = 'Times New Roman'
             run.font.size = Pt(13)
             pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         elif 'Bảng 2: Đặc trưng lưu lượng (m3/s) từ ngày 11 đến ngày 20/3/2024' in dl:
             # ban tin tiep theo
-            ntn = 'Bảng 2: Đặc trưng lưu lượng (m3/s) từ ngày {} - {}'.format(ngaytd,(now-timedelta(days=1)).strftime('%d/%m/%Y'))
+            ntn = 'Bảng 2: Đặc trưng lưu lượng (m3/s) từ ngày {} - {}'.format(ngaytd.strftime('%d/%m/%Y'),(now-timedelta(days=1)).strftime('%d/%m/%Y'))
             pr.text  =''
             run = pr.add_run(ntn)
             run.bold = True
@@ -132,7 +150,7 @@ def tin_nenKT_10day():
             pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER    
         elif 'Bảng 3: Dự báo lượng mưa (mm) từ ngày 21 - 31/3/2024' in dl:
             # ban tin tiep theo
-            ntn = 'Bảng 3: Dự báo lượng mưa (mm) từ ngày {} đến ngày {}'.format(now.strftime('%d/%m/%Y'),ngaydb)
+            ntn = 'Bảng 3: Dự báo lượng mưa (mm) từ ngày {} đến ngày {}'.format(now.strftime('%d/%m'),ngaydb.strftime('%d/%m/%Y'))
             pr.text  =''
             run = pr.add_run(ntn)
             run.bold = True
@@ -140,13 +158,13 @@ def tin_nenKT_10day():
             pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER   
         elif  'Từ ngày 21 - 31/3/2024, dòng chảy về hồ Thuỷ điện Sông Tranh 2 tiếp tục biến đổi chậm.' in dl:
             # ban tin tiep theo
-            ntn = 'Từ ngày {} - {}, dòng chảy về hồ Thuỷ điện Sông Tranh 2 tiếp tục biến đổi chậm.'.format(now.strftime('%d/%m/%Y'),ngaydb)
+            ntn = 'Từ ngày {} - {}, dòng chảy về hồ Thuỷ điện Sông Tranh 2 tiếp tục biến đổi chậm.'.format(now.strftime('%d/%m/%Y'),ngaydb.strftime('%d/%m/%Y'))
             pr.text  =''
             run = pr.add_run(ntn)
             run.font.size = Pt(13)
         elif 'Bảng 4: Đặc trưng lưu lượng (m3/s) dự báo từ ngày 21 đến ngày 31/3/2024' in dl:
             # ban tin tiep theo
-            ntn = 'Bảng 4: Đặc trưng lưu lượng (m3/s) dự báo từ ngày {} đến ngày {}'.format(now.strftime('%d/%m/%Y'),ngaydb)
+            ntn = 'Bảng 4: Đặc trưng lưu lượng (m3/s) dự báo từ ngày {} đến ngày {}'.format(now.strftime('%d/%m'),ngaydb.strftime('%d/%m/%Y'))
             pr.text  =''
             run = pr.add_run(ntn)
             run.bold = True
@@ -163,104 +181,116 @@ def tin_nenKT_10day():
             run.font.size = Pt(13)  
         elif 'Tổng hợp lượng mưa các trạm đo trên lưu vực Sông Tranh từ 11 - 20/3/2024' in dl:
             # ban tin tiep theo
-            ntn = 'Tổng hợp lượng mưa các trạm đo trên lưu vực Sông Tranh từ {} - {}'.format(ngaytd,(now-timedelta(days=1)).strftime('%d/%m/%Y'))
+            ntn = 'Tổng hợp lượng mưa các trạm đo trên lưu vực Sông Tranh từ {} - {}'.format(ngaytd.strftime('%d/%m'),(now-timedelta(days=1)).strftime('%d/%m/%Y'))
             pr.text  =''
             run = pr.add_run(ntn)
             # run.bold = True
             run.font.size = Pt(13)
             pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
                         
-                        
-                        
+
     # lay so lieu mua
     pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/QNAM.accdb'
+    # pth25 = r'D:\PM_PYTHON\SONGTRANH\DATA\QNAM.accdb'
     FileName=(pth25)
     cnxn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + FileName + ';')
     query = "SELECT * FROM mua"
     mua = pd.read_sql(query, cnxn)
-    mua = mua[(mua['thoigian'] >=bd_mua) & (mua['thoigian'] < (now-timedelta(days=1)))]
+    
+    mua = mua[(mua['thoigian'] >=datetime((bd_mua-timedelta(days=1)).year,(bd_mua-timedelta(days=1)).month,(bd_mua-timedelta(days=1)).day,20)) & (mua['thoigian'] <= datetime((now-timedelta(days=1)).year,(now-timedelta(days=1)).month,(now-timedelta(days=1)).day,19))]
     mua.set_index('thoigian',inplace=True)
-    mua.agg()
+    mua = mua.astype(float)
+    mua10 = mua.sum()
+    mua10 = mua10.replace(0.0,'-')
+    mua10 = mua10.map(lambda x: custom_round(float(x)) if x != '-' else '-')
+    dt_mua = mua10.replace('-',0)
+    max1 = max( dt_mua['tralinh'], dt_mua['tranam2'], dt_mua['travan'], dt_mua['tracang'],dt_mua['tramai'])
+    min1 = min( dt_mua['tralinh'], dt_mua['tranam2'], dt_mua['travan'], dt_mua['tracang'],dt_mua['tramai'])
+    max2 = max( dt_mua['tragiac'], dt_mua['tradon'], dt_mua['traleng'])
+    min2 = min( dt_mua['tragiac'], dt_mua['tradon'], dt_mua['traleng'])
+    max3 = max( dt_mua['trabui'], dt_mua['dapsongtranh'])
+    min3 = min( dt_mua['trabui'], dt_mua['dapsongtranh'])
     
+    # mua ngay de nhan xet
+    muangay = mua.rolling(24,min_periods=1).sum()
+    muangay = muangay[muangay.index.hour==19]
+    muangay = muangay.applymap("{0:.1f}".format)
+
+    # Thêm dữ liệu từ DataFrame vào bảng
+    for a,i in enumerate(range(muangay.shape[0])):
+        odoc.tables[1].cell(i+1, 0).text = (bd_mua + timedelta(days=a)).strftime('%d/%m/')
+        for j in range(muangay.shape[-1]):
+            odoc.tables[1].cell(i+1, j+1).text = str(muangay.values[i, j])
+
+    # dieu chinh lai format cho bang thong ke
+    for a in range(0,12):
+        for b in range(0,12):
+            try:
+                for pr in odoc.tables[1].cell(a,b).paragraphs:
+                    pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+                    for run in pr.runs:
+                        run.font.size = Pt(8)
+                        run.bold = False  
+            except:
+                pass
     
-    print(mua)
-    # # lay so lieu mua
-    # df= pd.read_excel(read_txt('path_tin/DATA_EXCEL.txt') + '/DATA_DR.xlsx',sheet_name='Muangay_theotin')
-    # dt_rang = pd.date_range(start=datetime(now.year,8,31,13), periods=len(df['time']), freq="6H")
-    # df['time'] = dt_rang
-    # now = datetime(now.year,now.month,now.day,7)
-    # ngaylaymua = datetime.strptime(ngaytd, '%d/%m/%Y')
-    # # print(ngaytd)
-    # # print(ngaylaymua)
-    # df = df[(df['time'] <= now) & (df['time'] >= datetime(ngaylaymua.year,ngaylaymua.month,ngaylaymua.day,13))]
-    # df.set_index('time',inplace=True)
-    # mua6h = df.rolling(4,min_periods=1).sum()
-    # mua6h = mua6h.loc[mua6h.index.hour==7]
-    # mua6h = mua6h.applymap("{0:.1f}".format)
-    # # max_rain_dates = df.idxmax()
-    # max_values = df.max()
-    # tong_values = df.sum()
-    # for r in range(0,11):
-    #     odoc.tables[1].cell(3,r).text = ''
+    # print(muangay)
+
         
-    # odoc.tables[1].cell(3,0).paragraphs[0].add_run("{0:.1f}".format(tong_values['Đầu mối'])).font.size = Pt(13) 
-    # odoc.tables[1].cell(3,1).paragraphs[0].add_run(str(max_values['Đầu mối'])).font.size = Pt(13) 
-    # odoc.tables[1].cell(3,2).paragraphs[0].add_run("{0:.1f}".format(tong_values['Đăk Nên'])).font.size = Pt(13) 
-    # odoc.tables[1].cell(3,3).paragraphs[0].add_run(str(max_values['Đăk Nên'])).font.size = Pt(13) 
-    # odoc.tables[1].cell(3,4).paragraphs[0].add_run("{0:.1f}".format(tong_values['Đăk tăng'])).font.size = Pt(13) 
-    # odoc.tables[1].cell(3,5).paragraphs[0].add_run(str(max_values['Đăk tăng'])).font.size = Pt(13) 
-    # odoc.tables[1].cell(3,6).paragraphs[0].add_run("{0:.1f}".format(tong_values['Sơn Tây'])).font.size = Pt(13) 
-    # odoc.tables[1].cell(3,7).paragraphs[0].add_run(str(max_values['Sơn Tây'])).font.size = Pt(13) 
+    mua10 = mua10.astype(str)
+    # print(mua10)
+    # bang top hop mua so 1   
+    odoc.tables[2].cell(1,0).text= 'Từ {} - {}'.format(bd_mua.strftime('%d/%m'),(now-timedelta(days=1)).strftime('%d/%m/%Y'))
+    odoc.tables[2].cell(1,1).text= str(min1) + ' - ' + str(max1)
+    odoc.tables[2].cell(1,2).text= str(min2) + ' - ' + str(max2)
+    odoc.tables[2].cell(1,3).text= str(min3) + ' - ' + str(max3)   
     
-    # # nhiet
-    # df= pd.read_excel(read_txt('path_tin/DATA_EXCEL.txt') + '/DATA_DR.xlsx',sheet_name='nhiet_am')
-    # dt_rang = pd.date_range(start=datetime(now.year,8,31,13), periods=len(df['time']), freq="D")
-    # df['time'] = dt_rang
-    # now = datetime(now.year,now.month,now.day)
-    # ngaylaynhiet = datetime.strptime(ngaytd, '%d/%m/%Y')
-    # df = df[(df['time'] <= now) & (df['time'] > ngaylaynhiet)]
-    # df.set_index('time',inplace=True)
+    for j in range(0,4):
+        pr = odoc.tables[1].cell(1,j).paragraphs[0]
+        pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     
-    # max = df.agg(['mean','max','min'])
+    
+    # bang du bao mua 3
+    odoc.tables[4].cell(1,0).text= 'Từ {} - {}'.format(now.strftime('%d/%m'),ngaydb.strftime('%d/%m/%Y'))
+    odoc.tables[4].cell(1,0).paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    # bang top hop mua so 6
+    odoc.tables[7].cell(1,1).text= mua10['tralinh']
+    odoc.tables[7].cell(2,1).text= mua10['tranam2']
+    odoc.tables[7].cell(3,1).text= mua10['travan']
+    odoc.tables[7].cell(4,1).text= mua10['tracang']
+    odoc.tables[7].cell(5,1).text= mua10['tramai']
+    odoc.tables[7].cell(6,1).text= mua10['tragiac']
+    odoc.tables[7].cell(7,1).text= mua10['tradon']
+    odoc.tables[7].cell(8,1).text= mua10['traleng']
+    odoc.tables[7].cell(9,1).text= mua10['dapsongtranh']
+    odoc.tables[7].cell(10,1).text= mua10['trabui']
 
-    # odoc.tables[1].cell(3,8).paragraphs[0].add_run(str(max['nhiet_tb']['mean'])).font.size = Pt(13) 
-    # odoc.tables[1].cell(3,9).paragraphs[0].add_run(str(max['nhiet_max']['max'])).font.size = Pt(13) 
-    # odoc.tables[1].cell(3,10).paragraphs[0].add_run(str(max['nhiet_min']['min'])).font.size = Pt(13) 
-    
-    
-    
-    # # dem so ngay de them rows
-    # ngaydb = xacdinhngaydb()
-    # num_days = abs(ngaydb - now).days
-    # if num_days ==6:
-    #     for a in range(3,5):
-    #         odoc.tables[a].add_row()
-    
-    
-    # odoc.tables[3].cell(2,0).text = now.strftime('%d/%m')
-    # odoc.tables[3].cell(3,0).text = (now + timedelta(days=1)).strftime('%d/%m')
-    # odoc.tables[3].cell(4,0).text = (now + timedelta(days=2)).strftime('%d/%m')
-    # odoc.tables[3].cell(5,0).text = (now + timedelta(days=3)).strftime('%d/%m')
-    # odoc.tables[3].cell(6,0).text = (now + timedelta(days=4)).strftime('%d/%m')
-    
+    for j in range(1,11):
+        pr = odoc.tables[7].cell(j,1).paragraphs[0]
+        pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        
+    for j in range(1,11):
+        pr = odoc.tables[7].cell(j,1).paragraphs[0]
+        pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    # print(mua10)
 
-    # odoc.tables[4].cell(1,0).text = now.strftime('%d/%m')
-    # odoc.tables[4].cell(2,0).text = (now + timedelta(days=1)).strftime('%d/%m')
-    # odoc.tables[4].cell(3,0).text = (now + timedelta(days=2)).strftime('%d/%m')
-    # odoc.tables[4].cell(4,0).text = (now + timedelta(days=3)).strftime('%d/%m')
-    # odoc.tables[4].cell(5,0).text = (now + timedelta(days=4)).strftime('%d/%m')
-            
-    # if num_days == 6:
-    #     odoc.tables[3].cell(7,0).text = (now + timedelta(days=5)).strftime('%d/%m')
-    #     odoc.tables[4].cell(6,0).text = (now + timedelta(days=5)).strftime('%d/%m')
-    # # q thuc do
-    # # odoc.tables[2].cell(3,10).paragraphs[0].add_run(str(max['nhiet_min']['min'])).font.size = Pt(13) 
-
+    query = "SELECT thoigian,qdenho FROM thuyvan"
+    mucnuoc = pd.read_sql(query, cnxn)
+    cnxn.close()
+    mucnuoc = mucnuoc[(mucnuoc['thoigian'] >=bd_mua) & (mucnuoc['thoigian'] <= datetime((now-timedelta(days=1)).year,(now-timedelta(days=1)).month,(now-timedelta(days=1)).day,23))]
+    mucnuoc.set_index('thoigian',inplace=True)
+    mucnuoc = mucnuoc.astype(float)
+    # bang thuc do luu luong 2
+    odoc.tables[3].cell(1,1).text= '{0:.1f}'.format(mucnuoc['qdenho'].mean())
+    odoc.tables[3].cell(1,1).paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     # # print(mua6h)
-    # pth = read_txt('path_tin/DRHV.txt') + '/DHC_TV05_' + now.strftime('%Y%m%d_1600') + '.docx'
-    # odoc.save(pth)
+    pth = read_txt('path_tin/DRHV.txt') + '/QNAM_BT10_STRANH_{}.docx'.format(now.strftime('%Y%m%d')) 
+    odoc.save(pth)
     # # convert(pth,pth.replace('.docx','.pdf'))
-    # messagebox.showinfo('Thông báo','OK!')
+    messagebox.showinfo('Thông báo','OK!')
+    
+# tin_nenKT_10day()   
+    
     
 def tin_tv10_load():
     now = datetime.now()

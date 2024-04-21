@@ -212,6 +212,45 @@ def tin_tvhn():
     mua = pd.read_sql(query, cnxn)
     mua = mua[mua['thoigian'] > tgpt - timedelta(hours=12.5)]
     mua.set_index('thoigian',inplace= True)
+    mua = mua.astype(float)
+    muatong = mua.sum()
+    nhanxetmua = ''
+    if muatong.sum() ==0:
+        nhanxetmua = 'Không mưa'
+    else:
+        kieumua = []
+        for p_mua in muatong:
+            if 5 <= p_mua and p_mua < 10:
+                kieumua.append('mưa vừa') 
+                break
+        for p_mua in muatong:
+            if 10 <= p_mua and p_mua < 20:
+                kieumua.append('mưa to') 
+                break    
+        for p_mua in muatong:    
+            if 20 <= p_mua :
+                kieumua.append('mưa rất to') 
+                break           
+        if len(kieumua) == 1:
+            if 'mưa vừa' in kieumua:
+                nhanxetmua = 'Có mưa, có nơi mưa vừa.'
+            elif 'mưa to' in kieumua:
+                nhanxetmua = 'Có mưa, có nơi to.'
+            elif 'mưa rất to' in kieumua:
+                nhanxetmua = 'Có mưa, có nơi mưa rất to.'
+        elif len(kieumua) == 2:
+            if 'mưa vừa' in kieumua and 'mưa to' in kieumua:
+                nhanxetmua = 'Có mưa, có nơi mưa vừa đến mưa to.'
+            elif 'mưa to' in kieumua and 'mưa rất to' in kieumua :
+                nhanxetmua = 'Có mưa, có nơi mưa to đến rất to.'
+            elif 'mưa vừa' in kieumua and 'mưa rất to' in kieumua:
+                nhanxetmua = 'Có mưa, có nơi mưa to đến rất to.'        
+        elif len(kieumua) == 3:  
+            nhanxetmua = 'Có mưa, mưa vừa, có nơi mưa to đến rất to.'      
+        
+    # print(len(muatong))
+    
+    
     mua6h = mua.rolling(6,min_periods=1).sum()
     mua6h = mua6h.loc[(mua6h.index.hour==1) | (mua6h.index.hour==7) | (mua6h.index.hour==13) | (mua6h.index.hour==19)]
     # print(mua6h)
@@ -219,12 +258,27 @@ def tin_tvhn():
     mua6h = mua6h.astype(str)
     mua6h =mua6h.replace('0.0','-')
     mua6h =mua6h.replace('nan','-')
-    print(mua6h)
+    # print(mua6h)
     mua6h = mua6h.applymap(lambda x: custom_round(float(x)) if x != '-' else '-')
-    print(mua6h)
+    # print(mua6h)
     mua6h = mua6h.astype(str)
     # mua6h =mua6h.replace('0.0','-')
     # print(mua6h)
+    
+    for pr in odoc.paragraphs:
+        dl = pr.text
+        if '1.1. Tình hình thời tiết: ' in dl:
+            # ban tin tiep theo
+            ntn = '1.1. Tình hình thời tiết: '
+            pr.text  =''
+            run = pr.add_run(ntn)
+            run.bold = True
+            run.font.size = Pt(13)   
+            run = pr.add_run(nhanxetmua)
+            run.font.size = Pt(13) 
+            break
+            
+    
     
     
 # tracang  traleng  tranam2  trabui  tramai  tratap  dapsongtranh  tralinh  tragiac  tradon  travan

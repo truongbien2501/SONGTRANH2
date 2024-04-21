@@ -12,7 +12,7 @@ from func.Seach_file import tim_file,read_txt
 from func.load_data import mo_word
 from func import load_data
 from win32com import client
-
+import pyodbc
 
 selected_value = None
 def set_selected_value(value):
@@ -54,7 +54,7 @@ def thoigianphattin():
 
 def sobt():
     pth = tim_file(read_txt('path_tin/LULU.txt'),'.docx')
-    print(pth)
+    # print(pth)
     ttpt = thoigianphattin()
     if ttpt.strftime('%Y%m%d_%H30') in pth:
         os.remove(pth)
@@ -64,7 +64,7 @@ def sobt():
     for a in odoc.tables[0].cell(0,0).paragraphs:
         if 'Số' in a.text:
             dl = str(a.text)
-            sbt = dl[dl.index('-')+1:dl.index('/')]
+            sbt = dl[dl.index(':')+1:dl.index('/')]
     return int(sbt) + 1
 
 def xacdinhngaydb():
@@ -100,28 +100,19 @@ def tin_nenKT_lulu():
     font.name = 'Times New Roman'
     font.size = Pt(13)
     
-    for pr in odoc.paragraphs:
-        dl = pr.text
-        if 'Tin phát lúc' in dl:
-                pr.text=''
-                soso = 'Tin phát lúc: '+ tgpt.strftime('%Hh%M')
-                run = pr.add_run(soso)
-                run.bold = True
-                run.italic = True
     
-    # so ban tin
     for t in range(0,2):
         for pr in odoc.tables[0].cell(0,t).paragraphs:
             dl = pr.text
             if 'Số:' in dl:
                 pr.text=''
-                soso = 'Số:LULU-'+ str(sbt) + '/DHC'
+                soso = 'Số: '+ str(sbt) + '/TLST2-ĐKTTVQN'
                 run = pr.add_run(soso)
                 run.bold = False
                 pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-            elif 'Quảng Ngãi' in dl:
+            elif 'Quảng Nam' in dl:
                 pr.text=''
-                ntn = 'Quảng Ngãi, ngày ' + now.strftime('%d') + ' tháng ' + now.strftime('%m') + ' năm ' + now.strftime('%Y')
+                ntn = 'Quảng Nam, ngày ' + now.strftime('%d') + ' tháng ' + now.strftime('%m') + ' năm ' + now.strftime('%Y')
                 run = pr.add_run(ntn)
                 run.italic = True
                 pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
@@ -129,139 +120,100 @@ def tin_nenKT_lulu():
         for run in pr.runs:
             font = run.font
             font.name = 'Times New Roman'
+        
+    # lay so lieu mua
+    pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/QNAM.accdb'
+    # pth25 = r'D:\PM_PYTHON\SONGTRANH\DATA\QNAM.accdb'
+    FileName=(pth25)
+    cnxn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + FileName + ';')
+    query = "SELECT * FROM mua"
+    mua = pd.read_sql(query, cnxn)
+    
+    mua = mua[(mua['thoigian'] >=(tgpt-timedelta(hours=3))) & (mua['thoigian'] <= (tgpt-timedelta(hours=0.5)))]
+    mua.set_index('thoigian',inplace=True)
+    mua = mua.astype(float)
+    mua3h = mua.sum()        
+        
+    
+    for pr in odoc.paragraphs:
+        dl = pr.text
+        if 'TIN LŨ VỀ HỒ THUỶ ĐIỆN SÔNG TRANH' in dl:
+            # ban tin tiep theo
+            ntn = 'TIN LŨ VỀ HỒ THUỶ ĐIỆN SÔNG TRANH 2'
+            pr.text  =''
+            run = pr.add_run(ntn)
+            run.bold = True
+            run.font.size = Pt(14)
+            pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        elif '1. Tình hình mưa (đơn vị mm):' in dl:
+            # ban tin tiep theo
+            ntn = '1. Tình hình mưa (đơn vị mm): '
+            pr.text  =''
+            run = pr.add_run(ntn)
+            run.font.size = Pt(13)
+            run.bold =True
+            run.italic =True
+            # pr.alignment = WD_PARAGRAPH_ALIGNMENT.Left
+            ntn = 'Trong 3 giờ qua ({} - {}) lưu vực sông tranh có mưa'.format((tgpt-timedelta(hours=3.5)).strftime('%Hh %d/%m'),tgpt.strftime('%Hh %d/%m/%Y'))
+            run = pr.add_run(ntn)
             
-    
-    # ngaydb = xacdinhngaydb()
-    # ngaydb = ngaydb - timedelta(days=1)
-    # ngaydb = ngaydb.strftime('%d/%m/%Y')
-    # ngaytd = xacdinhngaydaqua()
-    # ngaytd = ngaytd.strftime('%d/%m/%Y')
-    
-    # bang 1
-    odoc.tables[1].cell(0,1).text = tgpt.strftime('%Hh/%d/%m/%Y')
-    if tgpt.hour == 4 or tgpt.hour == 10 or tgpt.hour == 16 or tgpt.hour == 22:
-        de_t = 21
-        de_tt = 3
-    else:
-        de_t = 24
-        de_tt = 6
-    odoc.tables[1].cell(0,3).text = (tgpt + timedelta(hours=de_t - 0.5)).strftime('%Hh/%d/%m/%Y')
-    
-    # tinh mua thuc do
-    pth = read_txt('path_tin/DATA_EXCEL.txt') + '/DATA_DR.xlsx'
-    df = pd.read_excel(pth,sheet_name='Mua')
-    dt_rang = pd.date_range(start=datetime(now.year,9,1,0), periods=len(df['time']), freq="H")
-    df['time'] = dt_rang
-
-    df = df[(df['time'] > (tgpt - timedelta(hours=de_tt + 0.5))) & (df['time'] <= tgpt)]
-    muatonghop = df.iloc[:,1:].sum().T
-    # muatonghop = muatonghop.applymap("{0:.0f}".format)
-    muatonghop = muatonghop.replace(0, '-')
-    
-    print(muatonghop)
-    # bang mua thuc do bang 2
-    odoc.tables[2].cell(1,0).text = (tgpt - timedelta(hours= de_tt + 18 + 0.5)).strftime('%Hh/%d')  + ' - ' + (tgpt - timedelta(hours= de_tt + 12 + 0.5)).strftime('%Hh/%d')
-    odoc.tables[2].cell(2,0).text = (tgpt - timedelta(hours= de_tt + 12 + 0.5)).strftime('%Hh/%d') + ' - ' + (tgpt - timedelta(hours= de_tt + 6 + 0.5)).strftime('%Hh/%d')
-    odoc.tables[2].cell(3,0).text = (tgpt - timedelta(hours= de_tt + 6 + 0.5)).strftime('%Hh/%d') + ' - ' + (tgpt - timedelta(hours= de_tt + 0.5)).strftime('%Hh/%d')
-    odoc.tables[2].cell(4,0).text = (tgpt - timedelta(hours= de_tt + 0.5)).strftime('%Hh/%d') + ' - ' + tgpt.strftime('%Hh/%d')
-    
-    
-    if de_tt ==3:
-        for col in range(1,5):
-            odoc.tables[2].cell(1,col).text = odoc.tables[2].cell(2,col).text
-            odoc.tables[2].cell(2,col).text = odoc.tables[2].cell(3,col).text
-            odoc.tables[2].cell(3,col).text = odoc.tables[2].cell(4,col).text
-            odoc.tables[2].cell(4,col).text = '' 
-    else:
-        for col in range(1,5):
-            odoc.tables[2].cell(4,col).text = ''
-    # mua thuc do
-    if muatonghop['Đầu mối']!= '-':
-        odoc.tables[2].cell(4,1).text = '{:.1f}'.format(muatonghop['Đầu mối'])
-    else:
-        odoc.tables[2].cell(4,1).text = '-'
-        
-    if muatonghop['Đăk Nên']!= '-':    
-        odoc.tables[2].cell(4,2).text = '{:.1f}'.format(muatonghop['Đăk Nên'])
-    else:
-        odoc.tables[2].cell(4,2).text = '-'
-    if muatonghop['Đăk tăng']!= '-':
-        odoc.tables[2].cell(4,3).text = '{:.1f}'.format(muatonghop['Đăk tăng'])
-    else:
-        odoc.tables[2].cell(4,3).text = '-'
-        
-    if muatonghop['Sơn Tây']!= '-':
-        odoc.tables[2].cell(4,4).text = '{:.1f}'.format(muatonghop['Sơn Tây'])
-    else:
-        odoc.tables[2].cell(4,4).text = '-'
-    # bang mua thuc do bang 3
-    odoc.tables[3].cell(1,0).text = (tgpt - timedelta(hours= de_tt + 18 + 0.5)).strftime('%Hh/%d')  + ' - ' + (tgpt - timedelta(hours= de_tt + 12 + 0.5)).strftime('%Hh/%d')
-    odoc.tables[3].cell(2,0).text = (tgpt - timedelta(hours= de_tt + 12 + 0.5)).strftime('%Hh/%d') + ' - ' + (tgpt - timedelta(hours= de_tt + 6 + 0.5)).strftime('%Hh/%d')
-    odoc.tables[3].cell(3,0).text = (tgpt - timedelta(hours= de_tt + 6 + 0.5)).strftime('%Hh/%d') + ' - ' + (tgpt - timedelta(hours= de_tt + 0.5)).strftime('%Hh/%d')
-    odoc.tables[3].cell(4,0).text = (tgpt - timedelta(hours= de_tt + 0.5)).strftime('%Hh/%d') + ' - ' + tgpt.strftime('%Hh/%d')
-    
-    if de_tt ==3:
-        for col in range(1,5):
-            odoc.tables[3].cell(1,col).text = odoc.tables[3].cell(2,col).text
-            odoc.tables[3].cell(2,col).text = odoc.tables[3].cell(3,col).text
-            odoc.tables[3].cell(3,col).text = odoc.tables[3].cell(4,col).text
-            odoc.tables[3].cell(4,col).text = ''
-    else:
-        for col in range(1,5):
-            odoc.tables[3].cell(4,col).text = ''    
-        
-    # bang mua thuc do bang 4
-    odoc.tables[4].cell(0,1).text = (tgpt - timedelta(hours= de_tt + 12 + 0.5)).strftime('%Hh/%d')
-    odoc.tables[4].cell(0,2).text = (tgpt - timedelta(hours= de_tt + 6 + 0.5)).strftime('%Hh/%d')
-    odoc.tables[4].cell(0,3).text = (tgpt - timedelta(hours= de_tt + 0.5)).strftime('%Hh/%d')
-    odoc.tables[4].cell(0,4).text = tgpt.strftime('%Hh/%d')
-    
-    
-    # bang mua thuc do bang 5
-    odoc.tables[5].cell(1,0).text = tgpt.strftime('%Hh/%d')  + ' - ' + (tgpt + timedelta(hours= de_tt - 0.5)).strftime('%Hh/%d')
-    odoc.tables[5].cell(2,0).text = (tgpt + timedelta(hours= de_tt  - 0.5)).strftime('%Hh/%d') + ' - ' + (tgpt + timedelta(hours= de_tt + 6 - 0.5)).strftime('%Hh/%d')
-    odoc.tables[5].cell(3,0).text = (tgpt + timedelta(hours= de_tt + 6 - 0.5)).strftime('%Hh/%d') + ' - ' + (tgpt + timedelta(hours= de_tt + 12 -0.5)).strftime('%Hh/%d')
-    odoc.tables[5].cell(4,0).text = (tgpt + timedelta(hours= de_tt + 12 - 0.5)).strftime('%Hh/%d') + ' - ' + (tgpt + timedelta(hours= de_tt + 18 - 0.5)).strftime('%Hh/%d')
-    
-    if de_tt ==3:
-        for col in range(1,5):
-            # odoc.tables[5].cell(1,col).text = ''
-            pass
-
-    else:
-        for col in range(1,5):
-            odoc.tables[5].cell(1,col).text = odoc.tables[5].cell(2,col).text
-            odoc.tables[5].cell(2,col).text = odoc.tables[5].cell(3,col).text
-            odoc.tables[5].cell(3,col).text = odoc.tables[5].cell(4,col).text
-            odoc.tables[5].cell(4,col).text = ''
-    
-    # bang mua thuc do bang 6
-    odoc.tables[6].cell(1,0).text = tgpt.strftime('%Hh/%d')  + ' - ' + (tgpt + timedelta(hours= de_tt - 0.5)).strftime('%Hh/%d')
-    odoc.tables[6].cell(2,0).text = (tgpt + timedelta(hours= de_tt  - 0.5)).strftime('%Hh/%d') + ' - ' + (tgpt + timedelta(hours= de_tt + 6 - 0.5)).strftime('%Hh/%d')
-    odoc.tables[6].cell(3,0).text = (tgpt + timedelta(hours= de_tt + 6 - 0.5)).strftime('%Hh/%d') + ' - ' + (tgpt + timedelta(hours= de_tt + 12 -0.5)).strftime('%Hh/%d')
-    odoc.tables[6].cell(4,0).text = (tgpt + timedelta(hours= de_tt + 12 - 0.5)).strftime('%Hh/%d') + ' - ' + (tgpt + timedelta(hours= de_tt + 18 - 0.5)).strftime('%Hh/%d')
-    
-    for t in range(1,7):
-        for row in odoc.tables[t].rows:
-            for cell in row.cells:
-                for paragraph in cell.paragraphs:
-                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        elif 'Bảng 1: Lượng mưa từ ' in dl:
+            # ban tin tiep theo
+            ntn = 'Bảng 1: ' 
+            pr.text  =''
+            run = pr.add_run(ntn)
+            run.bold = True
+            run.italic =True
+            run.font.name = 'Times New Roman'
+            run.font.size = Pt(13)
+            pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            ntn = 'Lượng mưa từ {} - {}'.format((tgpt-timedelta(hours=3.5)).strftime('%Hh ngày %d/%m'),(tgpt-timedelta(hours=0.5)).strftime('%Hh ngày %d/%m%Y'))
+            run = pr.add_run(ntn)
+        elif 'Bảng 2: Mực nước lúc' in dl:
+            # ban tin tiep theo
+            ntn = 'Bảng 2: '
+            pr.text  =''
+            run = pr.add_run(ntn)
+            run.bold = True
+            run.italic =True
+            run.font.name = 'Times New Roman'
+            run.font.size = Pt(13)
+            pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER    
+            ntn = 'Mực nước lúc {} ngày {}'.format((tgpt-timedelta(hours=0.5)).strftime('%Hh'),(tgpt-timedelta(hours=0.5)).strftime('%d/%m%Y'))
+            run = pr.add_run(ntn)            
+        elif 'Bảng 3: Dự báo mưa thời đoạn 6 giờ' in dl:
+            # ban tin tiep theo
+            ntn = 'Bảng 3: '
+            pr.text  =''
+            run = pr.add_run(ntn)
+            run.bold = True
+            run.italic =True
+            run.font.name = 'Times New Roman'
+            run.font.size = Pt(13)
+            pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER    
+            ntn = 'Dự báo mưa thời đoạn 6 giờ từ {} đến {}'.format(tgpt.strftime('%Hh ngày %d%m'),(tgpt + timedelta(hours=23.5)).strftime('%Hh ngày %d%m/%Y'))
+            run = pr.add_run(ntn)
+        elif 'Bảng 4 : Dự báo lưu lượng đến hồ thời đoạn 6 giờ ' in dl:
+            # ban tin tiep theo
+            ntn = 'Bảng 4: '
+            pr.text  =''
+            run = pr.add_run(ntn)
+            run.bold = True
+            run.font.name = 'Times New Roman'
+            run.font.size = Pt(13)
+            pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER    
+            ntn = 'Dự báo lưu lượng đến hồ thời đoạn 6 giờ từ {} đến {}'.format(tgpt.strftime('%Hh ngày %d%m'),(tgpt + timedelta(hours=23.5)).strftime('%Hh ngày %d%m/%Y'))
+            run = pr.add_run(ntn)            
+            
+    # for t in range(1,7):
+    #     for row in odoc.tables[t].rows:
+    #         for cell in row.cells:
+    #             for paragraph in cell.paragraphs:
+    #                 paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
  
-    pth = read_txt('path_tin/LULU.txt') + '/DHC_LULU_' + tgpt.strftime('%Y%m%d_%H%M') + '.docx'
+    pth = read_txt('path_tin/LULU.txt') + '/QNAM_TINLU_ST2_' + tgpt.strftime('%Y%m%d_%H%M') + '.docx'
     odoc.save(pth)
-    # convert(pth,pth.replace('.docx','.pdf'))
     messagebox.showinfo('Thông báo','OK!')
-
-# def quanhe_h_w():
-#     pth  = read_txt('path_tin/DATA_EXCEL.txt') + '/DR_THUYVAN.xlsx'
-#     df = pd.read_excel(pth,sheet_name='Z-F-W')
-#     df = df[['H','W']]
-#     df =df.iloc[3:,:]
-#     # df.rename(columns={'Unnamed: 2':'W'},inplace=True)
-#     # df = df.applymap('{0:.2f}'.format)
-#     # print(df)
-#     w = df[df['H'] == H]['W']
-#     return w
     
 def tin_lulu_load():
     now = datetime.now()
