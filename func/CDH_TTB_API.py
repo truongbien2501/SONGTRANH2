@@ -29,6 +29,54 @@ def TTB_API_mucnuoc():
     data =data.astype(float)
     return data
 
+def TTB_API_mucnuoc10day():
+    now = datetime.now()
+    kt = datetime(now.year,now.month,now.day,now.hour)
+    bd = kt - timedelta(days=11)
+    data = pd.DataFrame()
+    data['time'] = pd.date_range(bd,kt,freq='min')
+    tram = pd.read_csv('ts_id/Qsongtranh.txt')
+    for item in zip(tram.Matram,tram.tentram,tram.TAB):
+    # print(item[0],item[2],item[1])
+        pth = 'http://113.160.225.84:2018/API_TTB/XEM/solieu.php?matram={}&ten_table={}&sophut=60&tinhtong=0&thoigianbd=%27{}%2000:00:00%27&thoigiankt=%27{}%2023:59:00%27'
+        pth = pth.format(item[0],item[2],bd.strftime('%Y-%m-%d'),kt.strftime('%Y-%m-%d'))
+        df = pd.read_html(pth)
+        df[0].rename(columns={"thoi gian":'time','so lieu':item[1]},inplace=True)
+        df = df[0].drop('Ma tram',axis=1)
+        df['time'] = pd.to_datetime(df['time'])
+        data = data.merge(df,how='left',on='time')
+    data.set_index('time',inplace=True)
+    data = data[data.index.minute == 0]
+
+    # data = data[['Son Giang','Tra Khuc','An Chi','Song Ve','Chau O','Tra Cau','Binh Dong','Dung Quat Idro']]*100
+    data =data.astype(float)
+    # print(data)
+    return data
+
+
+def TTB_API_mucnuoc():
+    now = datetime.now()
+    kt = datetime(now.year,now.month,now.day,now.hour)
+    bd = kt - timedelta(days=1)
+    data = pd.DataFrame()
+    data['time'] = pd.date_range(bd,kt,freq='T')
+    tram = pd.read_csv('ts_id/TTB_H_ODA.txt')
+    for item in zip(tram.Matram,tram.tentram,tram.TAB):
+    # print(item[0],item[2],item[1])
+        pth = 'http://113.160.225.84:2018/API_TTB/XEM/solieu.php?matram={}&ten_table={}&sophut=1&tinhtong=0&thoigianbd=%27{}%2000:00:00%27&thoigiankt=%27{}%2023:59:00%27'
+        pth = pth.format(item[0],item[2],bd.strftime('%Y-%m-%d'),kt.strftime('%Y-%m-%d'))
+        df = pd.read_html(pth)
+        df[0].rename(columns={"thoi gian":'time','so lieu':item[1]},inplace=True)
+        df = df[0].drop('Ma tram',axis=1)
+        df['time'] = pd.to_datetime(df['time'])
+        data = data.merge(df,how='left',on='time')
+    data.set_index('time',inplace=True)
+    data = data[data.index.minute == 0]
+
+    # data = data[['Son Giang','Tra Khuc','An Chi','Song Ve','Chau O','Tra Cau','Binh Dong','Dung Quat Idro']]*100
+    data =data.astype(float)
+    return data
+
 
 def TTB_API_mua():
     now = datetime.now()

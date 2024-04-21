@@ -11,6 +11,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from func.Seach_file import tim_file,read_txt
 from func.load_data import mo_word
 import pyodbc
+from func.CDH_TTB_API import TTB_API_mucnuoc10day
 selected_value = None
 def set_selected_value(value):
     global selected_value
@@ -108,8 +109,8 @@ def tin_nenKT_10day():
     ngaydb = xacdinhngaydb()
     ngaydb = ngaydb - timedelta(days=1)    
     ngaytd = xacdinhngaydaqua()
-    bd_mua = datetime(ngaytd.year,ngaytd.month,ngaytd.day,20)
-    
+    bd_mua = datetime((ngaytd- timedelta(days=1)).year,(ngaytd- timedelta(days=1)).month,(ngaytd- timedelta(days=1)).day,20)
+    # print(bd_mua)
     # ngaydb = datetime.now()
     # ngaytd = ngaydb - timedelta(days=10)
     # bd_mua = datetime(ngaytd.year,ngaytd.month,ngaytd.day,0)
@@ -126,7 +127,7 @@ def tin_nenKT_10day():
             pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         elif '(Từ ngày 21 đến 31/3/2024)' in dl:
             # ban tin tiep theo
-            ntn = '(Từ ngày {} đến ngày {})'.format(now.strftime('%d/%m/'),ngaydb.strftime('%d/%m/%Y'))
+            ntn = '(Từ ngày {} đến ngày {})'.format(now.strftime('%d/%m'),ngaydb.strftime('%d/%m/%Y'))
             pr.text  =''
             run = pr.add_run(ntn)
             run.font.size = Pt(13)
@@ -196,8 +197,7 @@ def tin_nenKT_10day():
     cnxn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + FileName + ';')
     query = "SELECT * FROM mua"
     mua = pd.read_sql(query, cnxn)
-    
-    mua = mua[(mua['thoigian'] >=datetime((bd_mua-timedelta(days=1)).year,(bd_mua-timedelta(days=1)).month,(bd_mua-timedelta(days=1)).day,20)) & (mua['thoigian'] <= datetime((now-timedelta(days=1)).year,(now-timedelta(days=1)).month,(now-timedelta(days=1)).day,19))]
+    mua = mua[(mua['thoigian'] >=bd_mua) & (mua['thoigian'] <= datetime((now-timedelta(days=1)).year,(now-timedelta(days=1)).month,(now-timedelta(days=1)).day,19))]
     mua.set_index('thoigian',inplace=True)
     mua = mua.astype(float)
     mua10 = mua.sum()
@@ -218,7 +218,7 @@ def tin_nenKT_10day():
 
     # Thêm dữ liệu từ DataFrame vào bảng
     for a,i in enumerate(range(muangay.shape[0])):
-        odoc.tables[1].cell(i+1, 0).text = (bd_mua + timedelta(days=a)).strftime('%d/%m/')
+        odoc.tables[1].cell(i+1, 0).text = (bd_mua + timedelta(days=a+1)).strftime('%d/%m/')
         for j in range(muangay.shape[-1]):
             odoc.tables[1].cell(i+1, j+1).text = str(muangay.values[i, j])
 
@@ -240,13 +240,13 @@ def tin_nenKT_10day():
     mua10 = mua10.astype(str)
     # print(mua10)
     # bang top hop mua so 1   
-    odoc.tables[2].cell(1,0).text= 'Từ {} - {}'.format(bd_mua.strftime('%d/%m'),(now-timedelta(days=1)).strftime('%d/%m/%Y'))
+    odoc.tables[2].cell(1,0).text= 'Từ {} - {}'.format((bd_mua+ timedelta(days=1)).strftime('%d/%m'),(now-timedelta(days=1)).strftime('%d/%m/%Y'))
     odoc.tables[2].cell(1,1).text= str(min1) + ' - ' + str(max1)
     odoc.tables[2].cell(1,2).text= str(min2) + ' - ' + str(max2)
     odoc.tables[2].cell(1,3).text= str(min3) + ' - ' + str(max3)   
     
     for j in range(0,4):
-        pr = odoc.tables[1].cell(1,j).paragraphs[0]
+        pr = odoc.tables[2].cell(1,j).paragraphs[0]
         pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     
     
@@ -274,15 +274,25 @@ def tin_nenKT_10day():
         pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     # print(mua10)
 
-    query = "SELECT thoigian,qdenho FROM thuyvan"
-    mucnuoc = pd.read_sql(query, cnxn)
-    cnxn.close()
-    mucnuoc = mucnuoc[(mucnuoc['thoigian'] >=bd_mua) & (mucnuoc['thoigian'] <= datetime((now-timedelta(days=1)).year,(now-timedelta(days=1)).month,(now-timedelta(days=1)).day,23))]
+    try:
+        mucnuoc = TTB_API_mucnuoc10day()
+        mucnuoc = mucnuoc.reset_index(False)
+        mucnuoc.rename(columns={'time':'thoigian','qden':'qdenho'},inplace=True)
+        cnxn.close()
+    except:
+        query = "SELECT thoigian,qdenho FROM thuyvan"
+        mucnuoc = pd.read_sql(query, cnxn)
+        cnxn.close()
+    # print(bd_mua + timedelta(hours=4))
+    mucnuoc = mucnuoc[(mucnuoc['thoigian'] >=(bd_mua + timedelta(hours=4))) & (mucnuoc['thoigian'] <= datetime((now-timedelta(days=1)).year,(now-timedelta(days=1)).month,(now-timedelta(days=1)).day,23))]
+
     mucnuoc.set_index('thoigian',inplace=True)
+    mucnuoc.to_excel('kiemtrah.xlsx')
     mucnuoc = mucnuoc.astype(float)
     # bang thuc do luu luong 2
     odoc.tables[3].cell(1,1).text= '{0:.1f}'.format(mucnuoc['qdenho'].mean())
     odoc.tables[3].cell(1,1).paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    
     # # print(mua6h)
     pth = read_txt('path_tin/DRHV.txt') + '/QNAM_BT10_STRANH_{}.docx'.format(now.strftime('%Y%m%d')) 
     odoc.save(pth)
