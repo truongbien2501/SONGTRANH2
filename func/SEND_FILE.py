@@ -136,8 +136,6 @@ def bientapbantin(pth,loaibantin):
     convert(tin_web,'TINMAU/{}_WEB.pdf'.format(loaibantin))
     convert_pdf_image('TINMAU/{}_WEB.pdf'.format(loaibantin),'tin_{}.png'.format(loaibantin))
  
-    
-
 
 def upload_stream():
     filegui_datatv = read_txt('path_tin/DATA_EXCEL.txt') + '/DR_THUYVAN.xlsx'

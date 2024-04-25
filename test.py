@@ -26,11 +26,11 @@ from win32com import client
 
 # pth = 'TINMAU/DRHV05.docx'
 # pth = r'C:\Users\Admin\Desktop\Chuyengiao\testtin\QBIN_TVHN_20230814_1130.docx'
-pth = 'TINMAU/ST_TVHN.docx'
+pth = 'TINMAU/ST_LULU.docx'
 hsm = Document(pth)
 i=-1
 j =-1
-for a in hsm.tables[5].rows:
+for a in hsm.tables[4].rows:
     i=i+1
     j=-1
     for b in a.cells:

@@ -215,10 +215,14 @@ def tin_tvhn():
     mua = mua.astype(float)
     muatong = mua.sum()
     nhanxetmua = ''
-    if muatong.sum() ==0:
+    if muatong.sum() == 0:
         nhanxetmua = 'Không mưa'
     else:
         kieumua = []
+        for p_mua in muatong:
+            if 0 < p_mua and p_mua < 5:
+                kieumua.append('mưa nhỏ') 
+                break
         for p_mua in muatong:
             if 5 <= p_mua and p_mua < 10:
                 kieumua.append('mưa vừa') 
@@ -232,21 +236,29 @@ def tin_tvhn():
                 kieumua.append('mưa rất to') 
                 break           
         if len(kieumua) == 1:
-            if 'mưa vừa' in kieumua:
-                nhanxetmua = 'Có mưa, có nơi mưa vừa.'
+            if 'mưa nhỏ' in kieumua:
+                nhanxetmua = 'có mưa nhỏ.'
+            elif 'mưa vừa' in kieumua:
+                nhanxetmua = 'có mưa, có nơi mưa vừa.'
             elif 'mưa to' in kieumua:
-                nhanxetmua = 'Có mưa, có nơi to.'
+                nhanxetmua = 'có mưa, có nơi to.'
             elif 'mưa rất to' in kieumua:
-                nhanxetmua = 'Có mưa, có nơi mưa rất to.'
+                nhanxetmua = 'có mưa, có nơi mưa rất to.'
         elif len(kieumua) == 2:
-            if 'mưa vừa' in kieumua and 'mưa to' in kieumua:
-                nhanxetmua = 'Có mưa, có nơi mưa vừa đến mưa to.'
-            elif 'mưa to' in kieumua and 'mưa rất to' in kieumua :
-                nhanxetmua = 'Có mưa, có nơi mưa to đến rất to.'
+            if 'mưa nhỏ' in kieumua and 'mưa vừa' in kieumua:
+                nhanxetmua = 'có mưa, có nơi mưa vừa.'
+            elif 'mưa nhỏ' in kieumua and 'mưa to' in kieumua:
+                nhanxetmua = 'có mưa, có nơi mưa to.'
+            elif 'mưa nhỏ' in kieumua and 'mưa rất to' in kieumua:
+                nhanxetmua = 'có mưa, có nơi mưa rất to.'                                        
+            elif 'mưa vừa' in kieumua and 'mưa to' in kieumua:
+                nhanxetmua = 'có mưa, có nơi mưa vừa đến mưa to.'
             elif 'mưa vừa' in kieumua and 'mưa rất to' in kieumua:
-                nhanxetmua = 'Có mưa, có nơi mưa to đến rất to.'        
+                nhanxetmua = 'có mưa, có nơi mưa to đến rất to.'
+            elif 'mưa to' in kieumua and 'mưa rất to' in kieumua :
+                nhanxetmua = 'có mưa, có nơi mưa to đến rất to.'        
         elif len(kieumua) == 3:  
-            nhanxetmua = 'Có mưa, mưa vừa, có nơi mưa to đến rất to.'      
+            nhanxetmua = 'có mưa, mưa vừa, có nơi mưa to đến rất to.'     
         
     # print(len(muatong))
     

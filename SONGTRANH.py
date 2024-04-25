@@ -4,10 +4,12 @@ from tkinter import ttk
 from func.Mua_SONGTRANH import save_solieu_mua,save_solieu_mucnuoc
 from func.load_data import downloadattmail,write_rain,load_sl_thuyvan,load_sl_5day,mo_excel,downloadattmail_lulu,load_sl_thuyvan_lulu
 from Run_tin.DRHN import tin_tvhn,tin_tv_load,nghiemthu_tvhn
-from Run_tin.DRHV10 import tin_nenKT_10day,tin_tv10_load
+from Run_tin.DRHV10 import tin_nenKT_10day
+from Run_tin.DRHV07 import tin_nenKT_05day
+from Run_tin.DRHD import tin_nenKT_thang
 from func.SEND_FILE import gui_drhn,gui_sthv,gui_sthd,gui_lulu
 from Run_tin.DRLULU import tin_nenKT_lulu,tin_lulu_load,tin_lulu_load1
-from Run_tin import DRHN,DRHV10,DRLULU
+from Run_tin import DRHN, DRHV07,DRHV10,DRLULU,DRHD
 from func.Seach_file import tim_file,read_txt
 from win32com import client
 from func.windy_db import laysolieudubao_windy
@@ -27,7 +29,7 @@ def mo_tvhn():
 def mo_tvhv():
     mo_word(tim_file(read_txt('path_tin/DRHV.txt'),'.docx'))
 def mo_tvhd():
-    mo_word(tim_file(read_txt('path_tin/TVHD.txt'),'.docx'))
+    mo_word(tim_file(read_txt('path_tin/DRHD.txt'),'.docx'))
 def mo_lulu():
     mo_word(tim_file(read_txt('path_tin/LULU.txt'),'.docx'))
 def mo_lqsl():
@@ -81,7 +83,7 @@ combo_box1.place(x=720, y=83)
 lbl = Label(root,text="ĐÀI KHÍ TƯỢNG THUỶ VĂN KHU VƯC TRUNG TRUNG BỘ" + '\n' + 'ĐÀI KHÍ TƯỢNG THUỶ VĂN TỈNH QUẢNG NAM',font=('Arial Bold',14)).pack(padx=10,pady=15)
 lb1 = Label(root,text='STHN',font=('Arial Bold',14)).place(x=90,y=120)
 lb2 = Label(root,text='STHV10',font=('Arial Bold',14)).place(x=90+160,y=120)
-lb3 = Label(root,text='STHV05',font=('Arial Bold',14)).place(x=90+320,y=120)
+lb3 = Label(root,text='STHV07',font=('Arial Bold',14)).place(x=90+320,y=120)
 lb4 = Label(root,text='STHD',font=('Arial Bold',14)).place(x=90+320+160,y=120)
 lb5 = Label(root,text='LULU',font=('Arial Bold',14)).place(x=90+320+160+130,y=120)
 # lb6 = Label(root,text='LQSL',font=('Arial Bold',14)).place(x=860,y=120)
@@ -103,6 +105,8 @@ tao_btn('bt_danhgia',"Nghiệm thu",nghiemthu_tvhn,80,160+300) # danh gia
 # tao_btn('bt_hoso',"UP_DATABASE",upload_database,80,160+300) # ho so du bao
 tao_btn('hs_uploadt',"Mở tin",mo_tvhn,80,160+350) #lam tin
 
+
+
 # # tao button han vua 10
 tao_btn('bt_dlh',"Tin nền KT",tin_nenKT_10day,245,160) # load ho
 # tao_btn('bt_dungtich',"Tin nền KT",tin_nenKT_10day,245,160+50) #dung tich ho
@@ -113,14 +117,26 @@ tao_btn('bt_dlh',"Tin nền KT",tin_nenKT_10day,245,160) # load ho
 tao_btn('bt_upload10',"Gửi tin",gui_sthv,245,160+300) # gui tin
 tao_btn('bt_upload10',"Mở tin",mo_tvhv,245,160+350) # gui tin
 
+# # tao button han vua 5
+tao_btn('bt_dlh',"Tin nền 7",tin_nenKT_05day,410,160) # load ho
+# tao_btn('bt_dungtich',"Tin nền KT",tin_nenKT_10day,245,160+50) #dung tich ho
+# tao_btn('bt_dungtich',"Mở DATA TV",mo_excel,245,160+100) #dung tich ho
+# tao_btn('bt_tvhv_map',"Load_TV", tin_tv10_load,245,160+50+100) #ve map
+# tao_btn('bt_tvhv',"Gửi tin",gui_drhv,245,160+50+50+100) #lam tin
+# tao_btn('bt_tvhv',"HỒ SƠ",hs_tvhv05,245,160+250) #lam tin
+tao_btn('bt_upload10',"Gửi tin",gui_sthv,410,160+300) # gui tin
+tao_btn('bt_upload10',"Mở tin",mo_tvhv,410,160+350) # gui tin
+
+
 # # tao button han dai
-tao_btn('bt_dlh',"Tin nền KT",tin_nenKT_10day,245,160) # load ho
+tao_btn('bt_dlh',"Tin nền tháng",tin_nenKT_thang,90+160+310,160) # load ho
 # tao_btn('bt_dungtich',"Tin nền KT",tin_nenKT_10day,245,160+50) #dung tich ho
 # tao_btn('bt_dungtich',"Mở DATA TV",mo_excel,245,160+100) #dung tich ho
 # tao_btn('bt_tvhv_map',"Load_TV", tin_tv10_load,245,160+50+100) #ve map
 # tao_btn('bt_tvhv',"Gửi tin",gui_drhv,245,160+50+50+100) #lam tin
 # tao_btn('bt_tvhv',"HỒ SƠ",hs_tvhv05,245,160+250) #lam tin
 tao_btn('bt_upload10',"Gửi tin",gui_sthd,90+160+320,160+300) # gui tin
+tao_btn('hs_uploadt',"Mở tin",mo_tvhd,90+160+320,160+350) #lam tin
 
 # # tao button lulu
 tao_btn('bt_dlh',"Load mua",save_solieu_mua,690,160) # load ho
@@ -137,10 +153,12 @@ tao_btn('bt_upload10',"Mở tin",mo_lulu,690,160+350) # gui tin
 selected_value = combo_box.get()
 DRHN.set_selected_value(selected_value)
 DRHV10.set_selected_value(selected_value)
+DRHD.set_selected_value(selected_value)
 def update_selected_value(event):
     selected_value = combo_box.get()
     DRHN.set_selected_value(selected_value)
     DRHV10.set_selected_value(selected_value)
+    DRHD.set_selected_value(selected_value)
 
 # Gắn sự kiện ComboboxSelected với hàm update_selected_value
 combo_box.bind("<<ComboboxSelected>>", update_selected_value)
@@ -148,10 +166,12 @@ combo_box.bind("<<ComboboxSelected>>", update_selected_value)
 duyettin = combo_box1.get()
 DRHN.set_selected_duyet(duyettin)
 DRHV10.set_selected_duyet(duyettin)
+DRHD.set_selected_duyet(duyettin)
 def update_selected_duyet(event):
     duyettin = combo_box1.get()
     DRHN.set_selected_duyet(duyettin)
     DRHV10.set_selected_duyet(duyettin)
+    DRHD.set_selected_duyet(duyettin)
 # Gắn sự kiện ComboboxSelected với hàm update_selected_value
 combo_box1.bind("<<ComboboxSelected>>", update_selected_duyet)
 
