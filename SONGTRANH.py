@@ -13,6 +13,7 @@ from Run_tin import DRHN, DRHV07,DRHV10,DRLULU,DRHD
 from func.Seach_file import tim_file,read_txt
 from win32com import client
 from func.windy_db import laysolieudubao_windy
+from func.CREAT_DSFO import creat_input_mike
 def mo_word(pth):
     word = client.Dispatch("Word.Application")
     word.Visible = True
@@ -92,13 +93,14 @@ lb8 = Label(root,text='Dự báo viên:',font=('Arial Bold',14)).place(x=180,y=8
 lb = Label(root,text='Duyệt tin:',font=('Arial Bold',14)).place(x=620,y=80)
 # lb1.place(x=90,y=120)
 
-
 # tao button DRHN
 tao_btn('bt_SQL',"Mưa",save_solieu_mua,80,160) # load so lieu
-tao_btn('bt_tvhv',"Dự báo Windy",laysolieudubao_windy,80,160+50) #lam tin
-tao_btn('bt_tvhv',"Tin nền",tin_tvhn,80,160+100) #lam tin
-tao_btn('bt_tvhv',"H_Web",save_solieu_mucnuoc,40,160+150) #lam tin
-tao_btn('bt_tvhv',"H_Mail",downloadattmail,125,160+150) #lam tin
+# tao_btn('bt_tvhv',"Dự báo Windy",laysolieudubao_windy,40,160+50) #lam tin
+# tao_btn('bt_tvhv',"Dự báo WRF",laysolieudubao_windy,125,160+50) #lam tin
+tao_btn('bt_tvhv',"Tin nền",tin_tvhn,80,160+50) #lam tin
+tao_btn('bt_tvhv',"H_Web",save_solieu_mucnuoc,40,160+100) #lam tin
+tao_btn('bt_tvhv',"H_Mail",downloadattmail,125,160+100) #lam tin
+tao_btn('bt_tvhv',"DSFO",creat_input_mike,80,160+150) #lam tin
 tao_btn('bt_tvhd',"Load_tin_TV",tin_tv_load,80,160+200) #lam tin
 tao_btn('bt_upload',"Gửi tin",gui_drhn,80,160+250) # ho so du bao
 tao_btn('bt_danhgia',"Nghiệm thu",nghiemthu_tvhn,80,160+300) # danh gia

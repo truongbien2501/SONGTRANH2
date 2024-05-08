@@ -10,7 +10,7 @@ from tkinter import messagebox
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from func.Seach_file import tim_file,read_txt
 import pyodbc
-from func.CDH_TTB_API import TTB_API_mucnuoc
+from func.CDH_TTB_API import TTB_API_mucnuoc,read_muadb_sever_hochua
 import numpy as np
 import  mysql.connector
 def creat_cxn():
@@ -80,14 +80,11 @@ def updatedatabase_dubao(tab_name,matram,value):
     # Tạo con trỏ
     cursor = cnx.cursor(buffered=True)
     sql = 'UPDATE {} SET SLDUNGDUOC = "{}",SLGOC = "{}" WHERE thoigian = "{}" and Matram = "{}"'.format(tab_name,value,value,tg,matram)
-    print(sql)
+    # print(sql)
     cursor.execute(sql)
     cnx.commit()
     cursor.close()
     cnx.close()
-    
-    
-    
     
     
     
@@ -205,11 +202,12 @@ def tin_tvhn():
     odoc.tables[5].cell(1,2).paragraphs[0].add_run((tgpt + timedelta(hours=24)).strftime('%Hh/%d/%m')).font.size = Pt(13)
     
     # lay so lieu mua
-    pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/QNAM.accdb'
+    pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/DATA.accdb'
     FileName=(pth25)
     cnxn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + FileName + ';')
     query = "SELECT * FROM mua"
     mua = pd.read_sql(query, cnxn)
+    mua = mua.replace('-',0)
     mua = mua[mua['thoigian'] > tgpt - timedelta(hours=12.5)]
     mua.set_index('thoigian',inplace= True)
     mua = mua.astype(float)
@@ -290,9 +288,6 @@ def tin_tvhn():
             run.font.size = Pt(13) 
             break
             
-    
-    
-    
 # tracang  traleng  tranam2  trabui  tramai  tratap  dapsongtranh  tralinh  tragiac  tradon  travan
     odoc.tables[1].cell(1,1).paragraphs[0].add_run(mua6h['tralinh'].iloc[0]).font.size = Pt(13)
     try: 
@@ -345,14 +340,24 @@ def tin_tvhn():
         odoc.tables[1].cell(10,2).paragraphs[0].add_run(mua6h['trabui'].iloc[1]).font.size = Pt(13) 
     except:
         pass
-    # mua du bao vao bang
-    mua_db = pd.read_excel('DATA/windy_db.xlsx')
-    mua_db = mua_db[['time','muaTra Doc','muaTrung Luu','muaThuong Luu']]
-    mua_db.set_index('time',inplace=True)
-    mua_db = mua_db[(mua_db.index > tgpt - timedelta(minutes=30)) & (mua_db.index <= tgpt + timedelta(hours=23.5))]
-    odoc.tables[3].cell(1,1).paragraphs[0].add_run("{0:.0f}".format(mua_db['muaTra Doc'].sum())).font.size = Pt(13)
-    odoc.tables[3].cell(1,2).paragraphs[0].add_run("{0:.0f}".format(mua_db['muaTrung Luu'].sum())).font.size = Pt(13)
-    odoc.tables[3].cell(1,3).paragraphs[0].add_run("{0:.0f}".format(mua_db['muaThuong Luu'].sum())).font.size = Pt(13)
+    
+    try:
+    #     # mua du bao vao bang
+    #     # mua_db = pd.read_excel('DATA/windy_db.xlsx')
+    #     # mua_db = mua_db[['time','muaTra Doc','muaTrung Luu','muaThuong Luu']]
+    #     # mua_db.set_index('time',inplace=True)
+    #     # mua_db = mua_db[(mua_db.index > tgpt - timedelta(minutes=30)) & (mua_db.index <= tgpt + timedelta(hours=23.5))]
+        mua_db = read_muadb_sever_hochua(24,'SÔNG TRANH 2')
+        mua1 = [mua_db['TraBui(ST2)'].values[0],mua_db['Dap(ST2)'].values[0]]
+        mua2 = [mua_db['TraLinh(ST2)'].values[0],mua_db['TraNam2(ST2)'].values[0],mua_db['TraVan(ST2)'].values[0],mua_db['TraNam2(ST2)'].values[0],mua_db['TraCang(ST2)'].values[0],mua_db['TraMai(ST2)'].values[0]]
+        mua3 = [mua_db['TraGiac(ST2)'].values[0],mua_db['TraDon(ST2)'].values[0],mua_db['TraLeng(ST2)'].values[0]]
+
+        odoc.tables[3].cell(1,1).paragraphs[0].add_run("{0:.1f}".format(sum(mua2)/len(mua2))).font.size = Pt(13)
+        odoc.tables[3].cell(1,2).paragraphs[0].add_run("{0:.1f}".format(sum(mua3)/len(mua3))).font.size = Pt(13)
+        odoc.tables[3].cell(1,3).paragraphs[0].add_run("{0:.1f}".format(sum(mua1)/len(mua1))).font.size = Pt(13)
+    except:
+        pass    
+
     
     if duyettin=='Trương Tuyến':
         picture_filename = 'chuky/kydau_tuyen.png'
@@ -396,20 +401,36 @@ def tin_tv_load():
         font.name = 'Times New Roman'
         font.size = Pt(13)
     
-        pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/QNAM.accdb'
+        pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/DATA.accdb'
         FileName=(pth25)
         cnxn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + FileName + ';')
         query = "SELECT thoigian,mucnuocthuongluu,qdenho FROM thuyvan"
         mucnuoc = pd.read_sql(query, cnxn)
         mucnuoc['thoigian'] = pd.to_datetime(mucnuoc['thoigian'])
+        mucnuoc =mucnuoc.loc[~mucnuoc['thoigian'].duplicated(keep='first')]
         h_ho = mucnuoc[mucnuoc['thoigian']==(tgpt - timedelta(minutes=30))]
-        mucnuoc = h_ho['mucnuocthuongluu'].values[0]
-        qve = h_ho['qdenho'].values[0]
-        
-        df = TTB_API_mucnuoc()
-        df = df.interpolate(method='linear')
-        h_giaothuy = df[df.index ==(tgpt - timedelta(minutes=30))]['Giao Thuy'].values[0]
-
+        try:
+            mucnuoc = h_ho['mucnuocthuongluu'].values[0]
+            qve = h_ho['qdenho'].values[0]
+        except:
+            mucnuoc = ''
+            qve = ''
+            # h_ho = TTB_API_mucnuoc()
+            # mucnuoc = h_ho[h_ho.index ==(tgpt - timedelta(minutes=30))]['mucnuoc'].values[0]
+            # qve = h_ho[h_ho.index ==(tgpt - timedelta(minutes=30))]['qden'].values[0]
+            messagebox.showerror('Lỗi','Kiểm tra số liệu email thủy điện, lấy số liệu bằng H_web')
+            
+        try:
+            df = TTB_API_mucnuoc()
+            df = df.interpolate(method='linear')
+            h_giaothuy = df[df.index ==(tgpt - timedelta(minutes=30))]['Giao Thuy'].values[0]
+            hdb1_giaothuy = df[df.index ==(tgpt - timedelta(hours=13.5))]['Giao Thuy'].values[0]
+            hdb2_giaothuy = df[df.index ==(tgpt - timedelta(hours=1.5))]['Giao Thuy'].values[0]
+        except:
+            h_giaothuy = ''
+            hdb1_giaothuy = ''
+            hdb2_giaothuy = ''
+            messagebox.showwarning('Cảnh báo','Không load được H giao thủy')
 
         odoc.tables[2].cell(1,1).text = ''
         odoc.tables[2].cell(2,1).text = ''
@@ -424,7 +445,15 @@ def tin_tv_load():
             for j in range(1,3):
                 pr = odoc.tables[2].cell(i,j).paragraphs[0]
                 pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+                
+        odoc.tables[5].cell(2,1).text =''
+        odoc.tables[5].cell(2,2).text =''
+        odoc.tables[5].cell(2,1).paragraphs[0].add_run('{0:.2f}'.format(hdb1_giaothuy))
+        odoc.tables[5].cell(2,2).paragraphs[0].add_run('{0:.2f}'.format(hdb2_giaothuy)) 
         
+        for j in range(1,3):
+            pr = odoc.tables[5].cell(2,j).paragraphs[0]
+            pr.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER        
         odoc.save(pth)
         # convert(pth,pth.replace('.docx','.pdf'))
         messagebox.showinfo('Thông báo','OK!')

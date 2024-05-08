@@ -1,0 +1,18 @@
+Matram,tentram,TAB
+5AV,mucnuoc_av,ho_dakdrinh_mucnuoc
+5AV,qxa_av,ho_dakdrinh_qdieutiet
+5AV,qden_av,ho_dakdrinh_qve
+5AV,qcm_av,ho_dakdrinh_qchaymay
+5AV,qxatran_av,ho_dakdrinh_qxatran
+5SB2,mucnuoc_sb2,ho_dakdrinh_mucnuoc
+5SB2,qxa_sb2,ho_dakdrinh_qdieutiet
+5SB2,qden_sb2,ho_dakdrinh_qve
+5SB2,qcm_sb2,ho_dakdrinh_qchaymay
+5SB2,qxatran_sb2,ho_dakdrinh_qxatran
+5SB4,mucnuoc_sb4,ho_dakdrinh_mucnuoc
+5SB4,qxa_sb4,ho_dakdrinh_qdieutiet
+5SB4,qden_sb4,ho_dakdrinh_qve
+5SB4,qcm_sb4,ho_dakdrinh_qchaymay
+5SB4,qxatran_sb4,ho_dakdrinh_qxatran
+553100,Hoi Khach,mucnuoc_oday
+553300,Ai Nghia,mucnuoc_oday

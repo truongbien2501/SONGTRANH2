@@ -1,0 +1,446 @@
+// Created     : 1999-03-4 15:38:39
+// DLL id      : C:\MIKEZERO\BIN\PFS32.DLL
+// PFS version : Feb 12 1999 01:15:07
+
+[MIKE_ZERO_PLOT_COMPOSER]
+   [FORMAT_VERSION]
+      Verno = 100
+   EndSect  // FORMAT_VERSION
+
+   [PAPER_SETUP]
+      PaperType = 'A4 Size'
+      PaperOrientation = 'Portrait'
+      PaperWidth = 210
+      PaperHeight = 297
+      LeftMargin = 10
+      TopMargin = 10
+      RightMargin = 10
+      BottomMargin = 10
+      HorizontalSpace = 5
+      VerticalSpace = 5
+      Printer = ''
+   EndSect  // PAPER_SETUP
+
+   [BATCH_SETUP]
+      Batchtype = 0
+      Startstep = 1
+      Endstep = 1
+      Stepinterval = 1
+      Starttime = '01-01-1990'
+      Endtime = '01-01-1990'
+      Steptime = 1
+      Stepunit = 1400
+   EndSect  // BATCH_SETUP
+
+   [ANIMATION_SETUP]
+      TimeStep = 15
+      TimeStepUnit = 1401
+      StartTime = 1980, 1, 1, 0, 0, 0
+      EndTime = 1980, 1, 1, 0, 0, 0
+   EndSect  // ANIMATION_SETUP
+
+   [ACTIVE_X_PLOT]
+      [PLOT_TYPE]
+         Name = 'MZTSPLOT.MzTSPlotCtrl.1'
+         ClassID = '{B686DB86-7158-11D1-89EA-00609710DB4A}'
+         Locked = false
+      EndSect  // PLOT_TYPE
+
+      [PLOT_AREA]
+         x0 = 10
+         y0 = 10.00
+         x1 = 200
+         y1 = 90.00
+      EndSect  // PLOT_AREA
+
+      [PLOT_PROPERTIES]
+         [MZ_TS_PLOT]
+            [GENERAL_PROPERTIES]
+               Name = 'Time Series Plot'
+               Frame = false
+               Transparent = false
+               Default_Item_Index = 2
+               TS_Legend_Draw = true
+               File_Legend_Draw = true
+               Grid_Draw = true
+               CHART_TITLE = ''
+               [MIKEZero_Time_Axis_Definition_Extreme]
+                  Calendar_Axis = true
+                  Date_Time_Min = 2023,  1,  1,  0,  0,  0
+                  Date_Time_Max = 2023, 10, 10, 10,  0,  0
+                  Y_Min = 0
+                  Y_Max = 1
+                  Y_Logarithmic = false
+                  Y_Reverse = false
+                  XAxis_Annotation = ''
+                  YAxis_Annotation = ''
+               EndSect  // MIKEZero_Time_Axis_Definition_Extreme
+
+               [MIKEZero_Time_Axis_Definition_View]
+                  Calendar_Axis = true
+                  Date_Time_Min = 2023,  1,  1,  0,  0,  0
+                  Date_Time_Max = 2023, 10, 10, 10,  0,  0
+                  Y_Min = 0
+                  Y_Max = 1
+                  Y_Logarithmic = false
+                  Y_Reverse = false
+                  XAxis_Annotation = ''
+                  YAxis_Annotation = ''
+               EndSect  // MIKEZero_Time_Axis_Definition_View
+
+               [MIKEZero_Time_Axis_Definition_Secondary_View]
+                  Calendar_Axis = false
+                  Relative_Time_Min = 1e+020
+                  Relative_Time_Max = -1e+020
+                  Y_Min = 1e+020
+                  Y_Max = -1e+020
+                  Y_Logarithmic = false
+                  Y_Reverse = false
+                  XAxis_Annotation = ''
+                  YAxis_Annotation = ''
+               EndSect  // MIKEZero_Time_Axis_Definition_Secondary_View
+
+            EndSect  // GENERAL_PROPERTIES
+
+            [ITEMS]
+               [ITEM_DEFINITION]
+                  [MIKEZero_Item_Definition]
+                     Item_Name = 'SONG TRANH 2, Observed RunOff'
+                     File_Name_New = |SONG TRANH 2.dfs0|
+                     Item_No = 1
+                     Eum_Item_Type = 100001
+                     Eum_Unit = 1800
+                     Min = 0
+                     Max = 1
+                     Data_Type = 1
+                     Secondary_Y_Axis = false
+                     Time_Series_Type = 0
+                     Time_Series_Type_Auto = true
+                     JKL_Index = 0, 0, 0
+                     JKL_Extremes = 0, 0, 0
+                     Horizontal_Spacing = 1
+                     Phase_Shift = 0
+                     [MIKEZero_Time_Axis_Definition_Item]
+                        Calendar_Axis = true
+                        Date_Time_Min = 2023,  1,  1,  0,  0,  0
+                        Date_Time_Max = 2023, 10, 10, 10,  0,  0
+                        Y_Min = 0
+                        Y_Max = 1
+                        Y_Logarithmic = false
+                        Y_Reverse = false
+                        XAxis_Annotation = ''
+                        YAxis_Annotation = ''
+                     EndSect  // MIKEZero_Time_Axis_Definition_Item
+
+                     [MIKEZero_Point_Object]
+                        Base_Title = ''
+                        Base_Reg_Key = ''
+                        Base_Col_Red = 255
+                        Base_Col_Green = 0
+                        Base_Col_Blue = 0
+                        Base_Display_On = true
+                        Point_Type = 7
+                        Point_Size = 0.3
+                        Point_Style = 2
+                     EndSect  // MIKEZero_Point_Object
+
+                     [MIKEZero_Line_Object]
+                        Base_Title = ''
+                        Base_Reg_Key = ''
+                        Base_Col_Red = 255
+                        Base_Col_Green = 0
+                        Base_Col_Blue = 0
+                        Base_Display_On = true
+                        Line_Thickness = 0
+                        Line_Style = 2
+                        Line_Polygon_Style = 0
+                     EndSect  // MIKEZero_Line_Object
+
+                  EndSect  // MIKEZero_Item_Definition
+
+               EndSect  // ITEM_DEFINITION
+
+               [ITEM_DEFINITION]
+                  [MIKEZero_Item_Definition]
+                     Item_Name = 'SONG TRANH 2, Simulated RunOff'
+                     File_Name_New = |SONG TRANH 2.dfs0|
+                     Item_No = 2
+                     Eum_Item_Type = 100001
+                     Eum_Unit = 1800
+                     Min = 0
+                     Max = 1
+                     Data_Type = 1
+                     Secondary_Y_Axis = false
+                     Time_Series_Type = 0
+                     Time_Series_Type_Auto = true
+                     JKL_Index = 0, 0, 0
+                     JKL_Extremes = 0, 0, 0
+                     Horizontal_Spacing = 1
+                     Phase_Shift = 0
+                     [MIKEZero_Time_Axis_Definition_Item]
+                        Calendar_Axis = true
+                        Date_Time_Min = 1973, 2, 1, 9, 0, 0
+                        Date_Time_Max = 1975, 12, 31, 9, 0, 0
+                        Y_Min = 0
+                        Y_Max = 1
+                        Y_Logarithmic = false
+                        Y_Reverse = false
+                        XAxis_Annotation = ''
+                        YAxis_Annotation = ''
+                     EndSect  // MIKEZero_Time_Axis_Definition_Item
+
+                     [MIKEZero_Point_Object]
+                        Base_Title = ''
+                        Base_Reg_Key = ''
+                        Base_Col_Red = 0
+                        Base_Col_Green = 0
+                        Base_Col_Blue = 0
+                        Base_Display_On = false
+                        Point_Type = 1
+                        Point_Size = 0.529167
+                        Point_Style = 0
+                     EndSect  // MIKEZero_Point_Object
+
+                     [MIKEZero_Line_Object]
+                        Base_Title = ''
+                        Base_Reg_Key = ''
+                        Base_Col_Red = 0
+                        Base_Col_Green = 0
+                        Base_Col_Blue = 0
+                        Base_Display_On = true
+                        Line_Thickness = 0
+                        Line_Style = 0
+                        Line_Polygon_Style = 0
+                     EndSect  // MIKEZero_Line_Object
+
+                  EndSect  // MIKEZero_Item_Definition
+
+               EndSect  // ITEM_DEFINITION
+
+            EndSect  // ITEMS
+
+         EndSect  // MZ_TS_PLOT
+
+      EndSect  // PLOT_PROPERTIES
+
+   EndSect  // ACTIVE_X_PLOT
+
+   [ACTIVE_X_PLOT]
+      [PLOT_TYPE]
+         Name = 'MZTSPLOT.MzTSPlotCtrl.1'
+         ClassID = '{B686DB86-7158-11D1-89EA-00609710DB4A}'
+         Locked = false
+      EndSect  // PLOT_TYPE
+
+      [PLOT_AREA]
+         x0 = 10
+         y0 = 100.00
+         x1 = 200
+         y1 = 180.00
+      EndSect  // PLOT_AREA
+
+      [PLOT_PROPERTIES]
+         [MZ_TS_PLOT]
+            [GENERAL_PROPERTIES]
+               Name = 'Time Series Plot'
+               Frame = false
+               Transparent = false
+               Default_Item_Index = 2
+               TS_Legend_Draw = true
+               File_Legend_Draw = true
+               Grid_Draw = true
+               CHART_TITLE = ''
+               [MIKEZero_Time_Axis_Definition_Extreme]
+                  Calendar_Axis = true
+                  Date_Time_Min = 2023,  1,  1,  0,  0,  0
+                  Date_Time_Max = 2023, 10, 10, 10,  0,  0
+                  Y_Min = 0
+                  Y_Max = 1509.84
+                  Y_Logarithmic = false
+                  Y_Reverse = false
+                  XAxis_Annotation = ''
+                  YAxis_Annotation = ''
+               EndSect  // MIKEZero_Time_Axis_Definition_Extreme
+
+               [MIKEZero_Time_Axis_Definition_View]
+                  Calendar_Axis = true
+                  Date_Time_Min = 2023,  1,  1,  0,  0,  0
+                  Date_Time_Max = 2023, 10, 10, 10,  0,  0
+                  Y_Min = 0
+                  Y_Max = 1509.84
+                  Y_Logarithmic = false
+                  Y_Reverse = false
+                  XAxis_Annotation = ''
+                  YAxis_Annotation = ''
+               EndSect  // MIKEZero_Time_Axis_Definition_View
+
+               [MIKEZero_Time_Axis_Definition_Secondary_View]
+                  Calendar_Axis = false
+                  Relative_Time_Min = 1e+020
+                  Relative_Time_Max = -1e+020
+                  Y_Min = 1e+020
+                  Y_Max = -1e+020
+                  Y_Logarithmic = false
+                  Y_Reverse = false
+                  XAxis_Annotation = ''
+                  YAxis_Annotation = ''
+               EndSect  // MIKEZero_Time_Axis_Definition_Secondary_View
+
+            EndSect  // GENERAL_PROPERTIES
+
+            [ITEMS]
+               [ITEM_DEFINITION]
+                  [MIKEZero_Item_Definition]
+                     Item_Name = 'SONG TRANH 2, Accumulated Qobs. Million'
+                     File_Name_New = |SONG TRANH 2.dfs0|
+                     Item_No = 3
+                     Eum_Item_Type = 100035
+                     Eum_Unit = 1600
+                     Min = 0
+                     Max = 1
+                     Data_Type = 1
+                     Secondary_Y_Axis = false
+                     Time_Series_Type = 0
+                     Time_Series_Type_Auto = true
+                     JKL_Index = 0, 0, 0
+                     JKL_Extremes = 0, 0, 0
+                     Horizontal_Spacing = 1
+                     Phase_Shift = 0
+                     [MIKEZero_Time_Axis_Definition_Item]
+                        Calendar_Axis = true
+                        Date_Time_Min = 2023,  1,  1,  0,  0,  0
+                        Date_Time_Max = 2023, 10, 10, 10,  0,  0
+                        Y_Min = 0
+                        Y_Max = 1
+                        Y_Logarithmic = false
+                        Y_Reverse = false
+                        XAxis_Annotation = '
+                        YAxis_Annotation = '
+                     EndSect  // MIKEZero_Time_Axis_Definition_Item
+
+                     [MIKEZero_Point_Object]
+                        Base_Title = ''
+                        Base_Reg_Key = ''
+                        Base_Col_Red = 255
+                        Base_Col_Green = 0
+                        Base_Col_Blue = 0
+                        Base_Display_On = true
+                        Point_Type = 7
+                        Point_Size = 0.3
+                        Point_Style = 2
+                     EndSect  // MIKEZero_Point_Object
+
+                     [MIKEZero_Line_Object]
+                        Base_Title = ''
+                        Base_Reg_Key = ''
+                        Base_Col_Red = 255
+                        Base_Col_Green = 0
+                        Base_Col_Blue = 0
+                        Base_Display_On = true
+                        Line_Thickness = 0
+                        Line_Style = 2
+                        Line_Polygon_Style = 0
+                     EndSect  // MIKEZero_Line_Object
+
+                  EndSect  // MIKEZero_Item_Definition
+
+               EndSect  // ITEM_DEFINITION
+
+               [ITEM_DEFINITION]
+                  [MIKEZero_Item_Definition]
+                     Item_Name = 'SONG TRANH 2, Accumulated Qsim. Million'
+                     File_Name_New = |SONG TRANH 2.dfs0|
+                     Item_No = 4
+                     Eum_Item_Type = 100035
+                     Eum_Unit = 1600
+                     Min = 0
+                     Max = 1
+                     Data_Type = 1
+                     Secondary_Y_Axis = false
+                     Time_Series_Type = 0
+                     Time_Series_Type_Auto = true
+                     JKL_Index = 0, 0, 0
+                     JKL_Extremes = 0, 0, 0
+                     Horizontal_Spacing = 1
+                     Phase_Shift = 0
+                     [MIKEZero_Time_Axis_Definition_Item]
+                        Calendar_Axis = true
+                        Date_Time_Min = 1973, 2, 1, 9, 0, 0
+                        Date_Time_Max = 1975, 12, 31, 9, 0, 0
+                        Y_Min = 0
+                        Y_Max = 1
+                        Y_Logarithmic = false
+                        Y_Reverse = false
+                        XAxis_Annotation = ''
+                        YAxis_Annotation = ''
+                     EndSect  // MIKEZero_Time_Axis_Definition_Item
+
+                     [MIKEZero_Point_Object]
+                        Base_Title = ''
+                        Base_Reg_Key = ''
+                        Base_Col_Red = 0
+                        Base_Col_Green = 0
+                        Base_Col_Blue = 0
+                        Base_Display_On = false
+                        Point_Type = 1
+                        Point_Size = 0.529167
+                        Point_Style = 0
+                     EndSect  // MIKEZero_Point_Object
+
+                     [MIKEZero_Line_Object]
+                        Base_Title = ''
+                        Base_Reg_Key = ''
+                        Base_Col_Red = 0
+                        Base_Col_Green = 0
+                        Base_Col_Blue = 0
+                        Base_Display_On = true
+                        Line_Thickness = 0
+                        Line_Style = 0
+                        Line_Polygon_Style = 0
+                     EndSect  // MIKEZero_Line_Object
+
+                  EndSect  // MIKEZero_Item_Definition
+
+               EndSect  // ITEM_DEFINITION
+
+            EndSect  // ITEMS
+
+         EndSect  // MZ_TS_PLOT
+
+      EndSect  // PLOT_PROPERTIES
+
+   EndSect  // ACTIVE_X_PLOT
+
+   [ACTIVE_X_PLOT]
+      [PLOT_TYPE]
+         Name = 'MZLABELPLOT.MzLabelPlotCtrl.1'
+         ClassID = '{27F15BB7-7E2C-11D2-84DA-00609710CBCE}'
+         Locked = false
+      EndSect  // PLOT_TYPE
+
+      [PLOT_AREA]
+         x0 = 0
+         y0 = 243
+         x1 = 205
+         y1 = 297
+      EndSect  // PLOT_AREA
+
+      [PLOT_PROPERTIES]
+         Bitmap = ''
+         Client = 'NAM calibration'
+         Data = '17/10/2023 10:13'
+         Description = 'R2=0.000, WBL=NaN (obs=   0mm/y, sim=1763mm/y)'
+         Drawing = ''
+         Initials = ''
+         Product = ''
+         Project = 'Results'
+         Bitmaptype = 1
+         FreeTitle1 = 'Parameterfile'
+         FreeTitle2 = ''
+         FreeText1 = 'RRParST2(2019)lai.rr11'
+         FreeText2 = ''
+      EndSect  // PLOT_PROPERTIES
+
+   EndSect  // ACTIVE_X_PLOT
+
+EndSect  // MIKE_ZERO_PLOT_COMPOSER

@@ -165,14 +165,15 @@ def tin_nenKT_thang():
     thangtruoc = now - timedelta(days=28)        
     bd_mua = datetime(thangtruoc.year,thangtruoc.month,1,20) - timedelta(days=1)
     # lay so lieu mua
-    pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/QNAM.accdb'
-    # pth25 = r'D:\PM_PYTHON\SONGTRANH\DATA\QNAM.accdb'
+    pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/DATA.accdb'
+    # pth25 = r'D:\PM_PYTHON\SONGTRANH\DATA\DATA.accdb'
     FileName=(pth25)
     cnxn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + FileName + ';')
     query = "SELECT * FROM mua"
     mua = pd.read_sql(query, cnxn)
     mua = mua[(mua['thoigian'] >=bd_mua) & (mua['thoigian'] <= datetime((now-timedelta(days=1)).year,(now-timedelta(days=1)).month,(now-timedelta(days=1)).day,19))]
     mua.set_index('thoigian',inplace=True)
+    mua = mua.replace('-',0)
     mua = mua.astype(float)
     muathang = mua.sum()
     muathang = muathang.replace(0.0,'-')

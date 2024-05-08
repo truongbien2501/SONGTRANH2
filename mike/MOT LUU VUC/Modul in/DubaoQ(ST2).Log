@@ -1,0 +1,3 @@
+  Error No 385 : Failed to open time series for  evaporation in catchment named SONG TRANH 2
+                 named: D:\PM_PYTHON\DU BAO LU QUANG NAM\External Data\Dau vao\So lieu Mua, boc hoi\Evaporation.dfs0
+                 Exception: File error.File does not exist or is not a valid dfs file that complies with the constraints set.

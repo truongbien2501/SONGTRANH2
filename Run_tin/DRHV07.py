@@ -196,8 +196,8 @@ def tin_nenKT_05day():
                         
 
     # lay so lieu mua
-    pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/QNAM.accdb'
-    # pth25 = r'D:\PM_PYTHON\SONGTRANH\DATA\QNAM.accdb'
+    pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/DATA.accdb'
+    # pth25 = r'D:\PM_PYTHON\SONGTRANH\DATA\DATA.accdb'
     FileName=(pth25)
     cnxn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + FileName + ';')
     query = "SELECT * FROM mua"
@@ -207,8 +207,10 @@ def tin_nenKT_05day():
     # print(datetime((now-timedelta(days=1)).year,(now-timedelta(days=1)).month,(now-timedelta(days=1)).day,19))
     mua = mua[(mua['thoigian'] >=bd_mua) & (mua['thoigian'] <= datetime((now-timedelta(days=1)).year,(now-timedelta(days=1)).month,(now-timedelta(days=1)).day,19))]
     mua.set_index('thoigian',inplace=True)
+    mua = mua.replace('-',0)
     # print(mua)
     mua = mua.astype(float)
+
     mua10 = mua.sum()
     mua10 = mua10.replace(0.0,'-')
     mua10 = mua10.map(lambda x: custom_round(float(x)) if x != '-' else '-')

@@ -156,8 +156,8 @@ def tin_nenKT_lulu():
             font.name = 'Times New Roman'
         
     # lay so lieu mua
-    pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/QNAM.accdb'
-    # pth25 = r'D:\PM_PYTHON\SONGTRANH\DATA\QNAM.accdb'
+    pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/DATA.accdb'
+    # pth25 = r'D:\PM_PYTHON\SONGTRANH\DATA\DATA.accdb'
     FileName=(pth25)
     cnxn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + FileName + ';')
     query = "SELECT * FROM mua"
@@ -233,10 +233,17 @@ def tin_nenKT_lulu():
     # load so lieu muc nuoc 
     dfh = TTB_API_mucnuoc_lu()
     dfh = dfh.interpolate(method='linear')
-    h_ns = dfh[dfh.index ==(tgpt - timedelta(minutes=30))]['Nong Son'].values[0]
-    h_cl = dfh[dfh.index ==(tgpt - timedelta(minutes=30))]['Cau Lau'].values[0]
-    h_st = dfh[dfh.index ==(tgpt - timedelta(minutes=30))]['mucnuoc'].values[0]
-    q_den = dfh[dfh.index ==(tgpt - timedelta(minutes=30))]['qden'].values[0]
+    try:
+        h_ns = dfh[dfh.index ==(tgpt - timedelta(minutes=30))]['Nong Son'].values[0]
+        h_cl = dfh[dfh.index ==(tgpt - timedelta(minutes=30))]['Cau Lau'].values[0]
+        h_st = dfh[dfh.index ==(tgpt - timedelta(minutes=30))]['mucnuoc'].values[0]
+        q_den = dfh[dfh.index ==(tgpt - timedelta(minutes=30))]['qden'].values[0]
+    except:
+        h_ns = dfh['Nong Son'].iloc[-1]
+        h_cl = dfh['Cau Lau'].iloc[-1]
+        h_st = dfh['mucnuoc'].iloc[-1]
+        q_den = dfh['qden'].iloc[-1]
+        messagebox.showinfo('Thông báo','Chưa có số liệu H lúc làm tin, lấy số liệu gần nhất')
     for pr in odoc.paragraphs:
         dl = pr.text
         if 'TIN LŨ VỀ HỒ THUỶ ĐIỆN SÔNG TRANH' in dl:

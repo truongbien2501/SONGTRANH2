@@ -105,11 +105,17 @@ def tin_nenKT_10day():
             font = run.font
             font.name = 'Times New Roman'
             
-    
-    ngaydb = xacdinhngaydb()
-    ngaydb = ngaydb - timedelta(days=1)    
+    try:
+        ngaydb = xacdinhngaydb()
+        ngaydb = ngaydb - timedelta(days=1)    
+    except:
+        ngaydb = datetime.now() 
+        ngaytd = ngaydb - timedelta(days=10) 
+        messagebox.showwarning('Thông báo','Chưa phải ngày làm tin!')
+
     ngaytd = xacdinhngaydaqua()
     bd_mua = datetime((ngaytd- timedelta(days=1)).year,(ngaytd- timedelta(days=1)).month,(ngaytd- timedelta(days=1)).day,20)
+    
     # print(bd_mua)
     # ngaydb = datetime.now()
     # ngaytd = ngaydb - timedelta(days=10)
@@ -191,14 +197,15 @@ def tin_nenKT_10day():
                         
 
     # lay so lieu mua
-    pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/QNAM.accdb'
-    # pth25 = r'D:\PM_PYTHON\SONGTRANH\DATA\QNAM.accdb'
+    pth25 = read_txt('path_tin/DATA_EXCEL.txt') + '/DATA.accdb'
+    # pth25 = r'D:\PM_PYTHON\SONGTRANH\DATA\DATA.accdb'
     FileName=(pth25)
     cnxn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + FileName + ';')
     query = "SELECT * FROM mua"
     mua = pd.read_sql(query, cnxn)
     mua = mua[(mua['thoigian'] >=bd_mua) & (mua['thoigian'] <= datetime((now-timedelta(days=1)).year,(now-timedelta(days=1)).month,(now-timedelta(days=1)).day,19))]
     mua.set_index('thoigian',inplace=True)
+    mua = mua.replace('-',0)
     mua = mua.astype(float)
     mua10 = mua.sum()
     mua10 = mua10.replace(0.0,'-')

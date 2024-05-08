@@ -146,8 +146,11 @@ def muasongtranh():
         element = driver.find_element(by=By.CSS_SELECTOR,value='#q-portal--menu--1 > div > div > div.q-date__main.col.column > div.q-date__content.col.relative-position > div > div.q-date__calendar-days-container.relative-position.overflow-hidden > div > div:nth-child({})'.format(str(a)))
         if str(element.text) == str(now.day):
             element.click()
-            element = driver.find_element(by=By.CSS_SELECTOR,value='#q-portal--menu--1 > div > div > div.q-date__main.col.column > div.q-date__content.col.relative-position > div > div.q-date__calendar-days-container.relative-position.overflow-hidden > div > div:nth-child({})'.format(str(a-1)))
-            element.click()
+            try:
+                element = driver.find_element(by=By.CSS_SELECTOR,value='#q-portal--menu--1 > div > div > div.q-date__main.col.column > div.q-date__content.col.relative-position > div > div.q-date__calendar-days-container.relative-position.overflow-hidden > div > div:nth-child({})'.format(str(a-1)))
+                element.click()
+            except:
+                pass
             break
     element = driver.find_element(by=By.CSS_SELECTOR,value='#q-portal--menu--1 > div > div > div.q-date__main.col.column > div.q-date__actions > div > button.q-btn.q-btn-item.non-selectable.no-outline.q-btn--unelevated.q-btn--rectangle.bg-primary.text-white.q-btn--actionable.q-focusable.q-hoverable > span.q-btn__content.text-center.col.items-center.q-anchor--skip.justify-center.row > span')  
     element.click()
@@ -196,7 +199,7 @@ def muasongtranh():
     df_mua = df_mua.apply(pd.to_numeric, errors='coerce')
     # df_mua.to_excel('muasontranh.xlsx')
     # print(df_mua.info())
-    mua = df_mua.rolling(5,min_periods=1).sum()
+    mua = df_mua.rolling(6,min_periods=1).sum()
     mua.index = pd.to_datetime(mua.index)
     mua = mua[mua.index.minute==0]
     # mua = mua.sort_index()
@@ -225,7 +228,7 @@ def query_sql(list_import,table_clounms,table_name):#TidVerticalIDVelocityForDet
 import os
 def insert_data(df,table_name):
     # print(df)
-    FileName=(os.getcwd() + '/DATA/QNAM.accdb')
+    FileName=(os.getcwd() + '/DATA/DATA.accdb')
     # print(FileName)
     cnx = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + FileName + ';')
     # Tạo con trỏ
@@ -243,8 +246,11 @@ def insert_data(df,table_name):
         # data[0] = row[0]
         # print(len(column_names))
         # print(data)
+        # print(len(data))
         sql = query_sql(data,column_names,table_name)
         # print(sql)
+        # cursor.execute(sql)
+        # cnx.commit()
         try:
             cursor.execute(sql)
             cnx.commit()
@@ -268,14 +274,19 @@ def save_solieu_mua():
     messagebox.showinfo('Thông báo','OK!')
 
 def save_solieu_mucnuoc():
+    # df = pd.read_excel('DATA/data.xlsx')
+    # df =df.sort_values('time')
+    # df = df[['time','h','hhadu','qden','qxa','qcm','qxatran']]
+    # print(df)
     df = mucnuocsongtranh()
     df.sort_values(by='time')
-    # df.reset_index(inplace=True)
     insert_data(df,'thuyvan')
     try:
         insert_data_sql(df[['time',4]],'ho_dakdrinh_qve')
         insert_data_sql(df[['time',5]],'ho_dakdrinh_qdieutiet')
         insert_data_sql(df[['time',2]],'ho_dakdrinh_mucnuoc')
+        insert_data_sql(df[['time',6]],'ho_dakdrinh_qchaymay')
+        insert_data_sql(df[['time',7]],'ho_dakdrinh_qxatran')        
     except:
         pass
     messagebox.showinfo('Thông báo','OK!')

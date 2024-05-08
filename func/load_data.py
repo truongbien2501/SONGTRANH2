@@ -57,12 +57,12 @@ def downloadattmail():
 
     df = pd.read_excel('SOLIEU/songtranh1.xls')
     df = df.iloc[4:,:]
-    print(df)
+    # print(df)
     df.columns = ['time','giờ','mucnuoc','qden','qmay','qtran','dctoithieu']
     ngay = datetime.strptime(df['time'].loc[4] + ' ' + str(df['giờ'].loc[4]) ,'%d/%m/%Y %H')
     # # homtruoc = pd.datetime(homtruoc.year,homtruoc.month,homtruoc.day,14)
     df['time'] = pd.date_range(ngay,freq='H',periods=len(df['time']))
-    print(df)
+    # print(df)
     df1 = pd.read_excel('SOLIEU/songtranh2.xls')
     df1 = df1.iloc[4:,:]
     df1.columns = ['time','giờ','mucnuoc','qden','qmay','qtran','dctoithieu']
@@ -72,16 +72,18 @@ def downloadattmail():
     
     df = pd.concat([df,df1],axis=0)
     df =df.loc[~df['time'].duplicated(keep='last')]
-
     df.insert(3,'mucnuochaluu',np.nan)
     df = df.drop(['giờ'],axis=1)
-    print(df)
+    df =df.dropna(subset=['mucnuoc'])
+    # print(df)
     insert_data(df,'thuyvan')
     df['tongxa'] = df['qmay'] + df['qtran'] + + df['dctoithieu']
     try:
         insert_data_sql(df[['time','qden']],'ho_dakdrinh_qve')
         insert_data_sql(df[['time','tongxa']],'ho_dakdrinh_qdieutiet')
         insert_data_sql(df[['time','mucnuoc']],'ho_dakdrinh_mucnuoc')
+        insert_data_sql(df[['time','qmay']],'ho_dakdrinh_qchaymay')
+        insert_data_sql(df[['time','qtran']],'ho_dakdrinh_qxatran')
     except:
         pass
     messagebox.showinfo('Thông báo', 'OK')
